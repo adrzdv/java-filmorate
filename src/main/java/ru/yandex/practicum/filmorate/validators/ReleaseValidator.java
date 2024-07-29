@@ -15,11 +15,7 @@ public class ReleaseValidator implements ConstraintValidator<ReleaseValidation, 
 
     @Override
     public boolean isValid(LocalDate releaseDate, ConstraintValidatorContext context) {
-        LocalDate earlyBorder = LocalDate.of(1895, 12, 28);
-        if (releaseDate.isBefore(earlyBorder)) {
-            log.warn("Release date is invalid. Must be after 28/12/1895");
-            return false;
-        }
-        return true;
+
+        return (!releaseDate.isBefore(LocalDate.of(1895, 12, 28)));
     }
 }

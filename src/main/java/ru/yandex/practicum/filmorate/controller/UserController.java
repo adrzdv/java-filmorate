@@ -10,14 +10,6 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
 
-/**
- * UserController class
- * <p>
- * Class for handling requests:
- * Add new user;
- * Update existing user;
- * Get all existing users;
- */
 
 @RestController
 @RequestMapping("/users")
@@ -26,6 +18,9 @@ public class UserController {
 
     private final Map<Long, User> userMap = new HashMap<>();
 
+    /**
+     * Add a new user
+     */
     @PostMapping
     public User addNew(@Valid @RequestBody User user) {
         Optional<Long> idOptional = getId();
@@ -45,6 +40,9 @@ public class UserController {
         return user;
     }
 
+    /**
+     * Update an existing user
+     */
     @PutMapping
     public User update(@Valid @RequestBody User user) throws ConditionsException, NotFoundException {
 
@@ -64,6 +62,9 @@ public class UserController {
         return userMap.get(user.getId());
     }
 
+    /**
+     * Get all users
+     */
     @GetMapping
     public Collection<User> getAllUsers() {
         return userMap.values();

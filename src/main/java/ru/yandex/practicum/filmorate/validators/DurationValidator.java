@@ -14,11 +14,8 @@ public class DurationValidator implements ConstraintValidator<DurationValidation
 
     @Override
     public boolean isValid(Long duration, ConstraintValidatorContext context) {
-        if (duration < 0) {
-            log.warn("Description is invalid. Must be positive value.");
-            return false;
-        }
 
-        return true;
+        return (!(duration < 0));
+
     }
 }

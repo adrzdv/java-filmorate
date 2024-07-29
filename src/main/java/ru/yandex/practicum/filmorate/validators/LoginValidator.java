@@ -14,10 +14,7 @@ public class LoginValidator implements ConstraintValidator<LoginValidation, Stri
     @Override
     public boolean isValid(String s, ConstraintValidatorContext context) {
 
-        if (s.contains(" ")) {
-            log.warn("Login is invalid");
-            return false;
-        }
-        return true;
+        return (!s.contains(" "));
+
     }
 }
