@@ -16,7 +16,7 @@ public class BirthValidator implements ConstraintValidator<BirthValidation, Loca
     @Override
     public boolean isValid(LocalDate birthDate, ConstraintValidatorContext context) {
         if (birthDate.isAfter(LocalDate.now())) {
-            log.warn("Birth date is invalid.");
+
             return false;
         }
         return true;

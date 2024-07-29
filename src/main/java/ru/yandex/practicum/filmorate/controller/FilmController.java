@@ -9,19 +9,15 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
 
-/**
- * FilmController class
- * <p>
- * Class for handling requests:
- * Add new film;
- * Update existing film;
- * Get all existing films;
- */
 @RestController
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
 
+
+    /**
+     * Add a new film
+     */
     private final Map<Long, Film> filmMap = new HashMap<>();
 
     @PostMapping
@@ -42,6 +38,10 @@ public class FilmController {
         return film;
     }
 
+    /**
+     * Update an existing film
+     */
+
     @PutMapping
     public Film update(@Valid @RequestBody Film film) throws ConditionsException, NotFoundException {
 
@@ -61,6 +61,9 @@ public class FilmController {
         return filmMap.get(film.getId());
     }
 
+    /**
+     * Get all existing films
+     */
     @GetMapping
     public Collection<Film> getAllFilms() {
         return filmMap.values();

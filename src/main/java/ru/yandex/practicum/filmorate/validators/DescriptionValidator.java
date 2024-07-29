@@ -15,8 +15,8 @@ public class DescriptionValidator implements ConstraintValidator<DescriptionVali
     @Override
     public boolean isValid(String s, ConstraintValidatorContext context) {
 
+
         if (s.length() >= 200) {
-            log.warn("Description is invalid. Length more than 200 symbols.");
             return false;
         }
         return true;
