@@ -3,15 +3,11 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.validators.BirthValidation;
 import ru.yandex.practicum.filmorate.validators.LoginValidation;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * User class
