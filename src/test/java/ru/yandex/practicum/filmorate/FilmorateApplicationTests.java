@@ -10,6 +10,12 @@ import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -29,6 +35,8 @@ class FilmorateApplicationTests {
 
     @Test
     void shouldValidUser() {
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserController userController = new UserController(userStorage, new UserService(userStorage));
         User newuser = User.builder()
                 .id(1L)
                 .email("example@mail.com")
@@ -42,14 +50,16 @@ class FilmorateApplicationTests {
                 .login("new")
                 .birthday(exampleBirth)
                 .build();
-        UserController uc = new UserController();
-        assertEquals(newuser, uc.addNew(newuser));
-        assertEquals(newuser2, uc.addNew(newuser2));
+        assertEquals(newuser, userController.addNew(newuser));
+        assertEquals(newuser2, userController.addNew(newuser2));
     }
 
     @Test
     void shouldValidFilm() {
-        FilmController fc = new FilmController();
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
+        FilmService filmService = new FilmService(filmStorage, userStorage);
+        FilmController fc = new FilmController(filmStorage, filmService);
         Film film = Film.builder()
                 .id(1L)
                 .name("film")
