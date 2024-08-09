@@ -3,10 +3,12 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
 
@@ -15,64 +17,113 @@ import java.util.*;
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
+    private final UserStorage userStorage;
+    private final UserService userService;
 
-    private final Map<Long, User> userMap = new HashMap<>();
+    public UserController(UserStorage userStorage, UserService userService) {
+        this.userStorage = userStorage;
+        this.userService = userService;
+    }
 
     /**
      * Add a new user
+     *
+     * @param user new current user object
+     * @return User object
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public User addNew(@Valid @RequestBody User user) {
-        Optional<Long> idOptional = getId();
-        Long id;
-        if (idOptional.isPresent()) {
-            id = idOptional.get();
-            id++;
-        } else {
-            id = 1L;
-        }
-        user.setId(id);
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
-        userMap.put(user.getId(), user);
-        log.info("New user: {} added by id: {}", user.getLogin(), user.getId());
-        return user;
+        return userStorage.addNew(user);
+
     }
 
     /**
-     * Update an existing user
+     * Update current user
+     *
+     * @param user current user object
+     * @return User object
+     * @throws ConditionsException
+     * @throws NotFoundException
      */
     @PutMapping
     public User update(@Valid @RequestBody User user) throws ConditionsException, NotFoundException {
-
-        if (user.getId() == null) {
-            log.info("Requested user's id is null");
-            throw new ConditionsException("Id cant be NULL");
-        }
-
-        if (userMap.containsKey(user.getId())) {
-            userMap.put(user.getId(), user);
-            log.info("User id: {} login: {} updated", user.getId(), user.getLogin());
-        } else {
-            log.warn("User id: {} login: {} not found", user.getId(), user.getLogin());
-            throw new NotFoundException("User not found");
-        }
-
-        return userMap.get(user.getId());
+        return userStorage.update(user);
     }
 
     /**
-     * Get all users
+     * Get list of all users
+     *
+     * @return Collection of users
      */
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Collection<User> getAllUsers() {
-        return userMap.values();
+        return userStorage.getAll();
     }
 
-    private Optional<Long> getId() {
 
-        return userMap.keySet().stream()
-                .max(Long::compare);
+    /**
+     * Add a new friend to current user
+     *
+     * @param id       user's id
+     * @param friendId friend's id
+     * @return Collection of users
+     * @throws ConditionsException
+     * @throws DuplicateException
+     * @throws NotFoundException
+     */
+    @PutMapping(value = "/{id}/friends/{friendId}")
+    public Collection<User> addFriend(@PathVariable Long id,
+                                      @PathVariable Long friendId)
+            throws ConditionsException, DuplicateException, NotFoundException {
+        return userService.addFriend(id, friendId);
     }
+
+    /**
+     * Delete friend from current user
+     *
+     * @param id       user's id
+     * @param friendId friend's id
+     * @return Collection of users
+     * @throws ConditionsException
+     * @throws NotFoundException
+     */
+    @DeleteMapping(value = "/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<User> deleteFriend(@PathVariable Long id,
+                                         @PathVariable Long friendId) throws ConditionsException, NotFoundException {
+        return userService.deleteFriend(id, friendId);
+    }
+
+
+    /**
+     * Get all user's friends
+     *
+     * @param id current user's id
+     * @return Collection of users
+     * @throws NotFoundException
+     */
+    @GetMapping(value = "/{id}/friends")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<User> getFriends(@PathVariable Long id) throws NotFoundException {
+        return userService.getFriends(id);
+    }
+
+    /**
+     * Get common users
+     *
+     * @param id      first user's id
+     * @param otherId another user's id
+     * @return Collection of users
+     * @throws NotFoundException
+     * @throws NoCommonUsers
+     */
+    @GetMapping(value = "{id}/friends/common/{otherId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<User> getCommon(@PathVariable Long id,
+                                      @PathVariable Long otherId) throws NotFoundException, NoCommonUsers {
+        return userService.getCommon(id, otherId);
+    }
+
 }
