@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.exceptions.DuplicateException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.*;
 
@@ -17,11 +16,10 @@ import java.util.*;
 @Slf4j
 public class FilmController {
 
-    private final FilmStorage filmStorage;
     private final FilmService filmService;
 
-    public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        this.filmStorage = filmStorage;
+    public FilmController(FilmService filmService) {
+
         this.filmService = filmService;
     }
 
@@ -35,7 +33,8 @@ public class FilmController {
     @PostMapping
     public Film addNew(@Valid @RequestBody Film film) {
 
-        return filmStorage.addNew(film);
+        return filmService.getFilmStorage().addNew(film);
+
     }
 
     /**
@@ -49,7 +48,7 @@ public class FilmController {
     @PutMapping
     public Film update(@Valid @RequestBody Film film) throws ConditionsException, NotFoundException {
 
-        return filmStorage.update(film);
+        return filmService.getFilmStorage().update(film);
     }
 
 
@@ -60,7 +59,8 @@ public class FilmController {
      */
     @GetMapping
     public Collection<Film> getAll() {
-        return filmStorage.getAll();
+
+        return filmService.getFilmStorage().getAll();
 
     }
 

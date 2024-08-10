@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 
 import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
+import ru.yandex.practicum.filmorate.exceptions.DuplicateException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -42,6 +43,38 @@ public interface FilmStorage {
      * @throws NotFoundException
      */
     Film getFilm(Long id) throws NotFoundException;
+
+    /**
+     * Add a like by current user to current film
+     *
+     * @param id          film's id
+     * @param userId      user's id
+     * @param userStorage current implementation of UserStorage interface
+     * @return Film
+     * @throws NotFoundException
+     * @throws DuplicateException
+     */
+    Film addLike(Long id, Long userId, UserStorage userStorage) throws NotFoundException, DuplicateException;
+
+
+    /**
+     * Returns list of the most rated films
+     *
+     * @param count size of returning list
+     * @return Collection of film
+     */
+    Collection<Film> getMostRated(int count);
+
+    /**
+     * Remove a current user's like
+     *
+     * @param id          film's id
+     * @param userId      user's id
+     * @param userStorage current implementation of UserStorage interface
+     * @return Film
+     * @throws NotFoundException
+     */
+    Film removeLike(Long id, Long userId, UserStorage userStorage) throws NotFoundException;
 
 
 }

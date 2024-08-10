@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
 
@@ -17,11 +16,10 @@ import java.util.*;
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
-    private final UserStorage userStorage;
     private final UserService userService;
 
-    public UserController(UserStorage userStorage, UserService userService) {
-        this.userStorage = userStorage;
+    public UserController(UserService userService) {
+
         this.userService = userService;
     }
 
@@ -34,7 +32,8 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User addNew(@Valid @RequestBody User user) {
-        return userStorage.addNew(user);
+
+        return userService.getUserStorage().addNew(user);
 
     }
 
@@ -48,7 +47,8 @@ public class UserController {
      */
     @PutMapping
     public User update(@Valid @RequestBody User user) throws ConditionsException, NotFoundException {
-        return userStorage.update(user);
+
+        return userService.getUserStorage().update(user);
     }
 
     /**
@@ -59,7 +59,9 @@ public class UserController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Collection<User> getAllUsers() {
-        return userStorage.getAll();
+
+        return userService.getUserStorage().getAll();
+
     }
 
 
@@ -69,14 +71,12 @@ public class UserController {
      * @param id       user's id
      * @param friendId friend's id
      * @return Collection of users
-     * @throws ConditionsException
      * @throws DuplicateException
      * @throws NotFoundException
      */
     @PutMapping(value = "/{id}/friends/{friendId}")
     public Collection<User> addFriend(@PathVariable Long id,
-                                      @PathVariable Long friendId)
-            throws ConditionsException, DuplicateException, NotFoundException {
+                                      @PathVariable Long friendId) throws DuplicateException, NotFoundException {
         return userService.addFriend(id, friendId);
     }
 
@@ -86,13 +86,12 @@ public class UserController {
      * @param id       user's id
      * @param friendId friend's id
      * @return Collection of users
-     * @throws ConditionsException
      * @throws NotFoundException
      */
     @DeleteMapping(value = "/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
     public Collection<User> deleteFriend(@PathVariable Long id,
-                                         @PathVariable Long friendId) throws ConditionsException, NotFoundException {
+                                         @PathVariable Long friendId) throws NotFoundException {
         return userService.deleteFriend(id, friendId);
     }
 

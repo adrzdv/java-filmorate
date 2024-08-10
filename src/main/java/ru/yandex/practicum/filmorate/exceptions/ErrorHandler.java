@@ -31,4 +31,5 @@ public class ErrorHandler {
     public ErrorResponse duplicateCheck(final DuplicateException e) {
         return new ErrorResponse("Error", e.getMessage());
     }
+
 }

@@ -36,7 +36,7 @@ class FilmorateApplicationTests {
     @Test
     void shouldValidUser() {
         UserStorage userStorage = new InMemoryUserStorage();
-        UserController userController = new UserController(userStorage, new UserService(userStorage));
+        UserController userController = new UserController(new UserService(userStorage));
         User newuser = User.builder()
                 .id(1L)
                 .email("example@mail.com")
@@ -59,7 +59,7 @@ class FilmorateApplicationTests {
         FilmStorage filmStorage = new InMemoryFilmStorage();
         UserStorage userStorage = new InMemoryUserStorage();
         FilmService filmService = new FilmService(filmStorage, userStorage);
-        FilmController fc = new FilmController(filmStorage, filmService);
+        FilmController fc = new FilmController(filmService);
         Film film = Film.builder()
                 .id(1L)
                 .name("film")
