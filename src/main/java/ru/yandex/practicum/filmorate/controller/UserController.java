@@ -33,7 +33,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public User addNew(@Valid @RequestBody User user) {
 
-        return userService.getUserStorage().addNew(user);
+        return userService.addNew(user);
 
     }
 
@@ -48,7 +48,7 @@ public class UserController {
     @PutMapping
     public User update(@Valid @RequestBody User user) throws ConditionsException, NotFoundException {
 
-        return userService.getUserStorage().update(user);
+        return userService.update(user);
     }
 
     /**
@@ -60,7 +60,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public Collection<User> getAllUsers() {
 
-        return userService.getUserStorage().getAll();
+        return userService.getAll();
 
     }
 

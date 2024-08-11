@@ -33,7 +33,7 @@ public class FilmController {
     @PostMapping
     public Film addNew(@Valid @RequestBody Film film) {
 
-        return filmService.getFilmStorage().addNew(film);
+        return filmService.addNew(film);
 
     }
 
@@ -48,7 +48,7 @@ public class FilmController {
     @PutMapping
     public Film update(@Valid @RequestBody Film film) throws ConditionsException, NotFoundException {
 
-        return filmService.getFilmStorage().update(film);
+        return filmService.update(film);
     }
 
 
@@ -60,7 +60,7 @@ public class FilmController {
     @GetMapping
     public Collection<Film> getAll() {
 
-        return filmService.getFilmStorage().getAll();
+        return filmService.getAll();
 
     }
 

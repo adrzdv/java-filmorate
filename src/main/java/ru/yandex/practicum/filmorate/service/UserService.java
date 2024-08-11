@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.*;
@@ -12,7 +11,6 @@ import java.util.*;
 @Service
 public class UserService {
 
-    @Getter
     private final UserStorage userStorage;
 
     @Autowired
@@ -76,5 +74,39 @@ public class UserService {
 
         return userStorage.getCommon(id, otherId);
 
+    }
+
+    /**
+     * Add a new user object
+     *
+     * @param user new user object for add
+     * @return User
+     */
+    public User addNew(User user) {
+
+        return userStorage.addNew(user);
+    }
+
+    /**
+     * Update an existing user
+     *
+     * @param user user object for update
+     * @return User
+     * @throws ConditionsException
+     * @throws NotFoundException
+     */
+    public User update(User user) throws ConditionsException, NotFoundException {
+
+        return userStorage.update(user);
+    }
+
+    /**
+     * Get collection of existing users
+     *
+     * @return Collection of users
+     */
+    public Collection<User> getAll() {
+
+        return userStorage.getAll();
     }
 }

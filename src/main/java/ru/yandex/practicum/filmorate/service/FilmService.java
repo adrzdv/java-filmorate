@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
 import ru.yandex.practicum.filmorate.exceptions.DuplicateException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -14,7 +14,6 @@ import java.util.Collection;
 @Service
 public class FilmService {
 
-    @Getter
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
@@ -64,6 +63,42 @@ public class FilmService {
 
         return filmStorage.getMostRated(count);
 
+    }
+
+    /**
+     * Add a new film object
+     *
+     * @param film current film object to add
+     * @return Film
+     */
+
+    public Film addNew(Film film) {
+
+        return filmStorage.addNew(film);
+    }
+
+    /**
+     * Update an existing film
+     *
+     * @param film film object for update
+     * @return Film
+     * @throws ConditionsException
+     * @throws NotFoundException
+     */
+
+    public Film update(Film film) throws ConditionsException, NotFoundException {
+
+        return filmStorage.update(film);
+    }
+
+    /**
+     * Get collection of all existing films
+     *
+     * @return Collection of film
+     */
+    public Collection<Film> getAll() {
+
+        return filmStorage.getAll();
     }
 
 }
