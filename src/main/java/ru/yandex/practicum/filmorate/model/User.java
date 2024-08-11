@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.validators.BirthValidation;
 import ru.yandex.practicum.filmorate.validators.LoginValidation;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * User class
@@ -16,6 +17,7 @@ import java.time.LocalDate;
  * login - user's login, mustn't have space and cant be null
  * name - user's name for representation, if null - use login
  * birthDate - user's date of birth, cant be in the future
+ * friends - collection of friend's id
  */
 
 @Getter
@@ -37,4 +39,5 @@ public class User {
     private String name;
     @BirthValidation
     private LocalDate birthday;
+    private Set<Long> friends;
 }
