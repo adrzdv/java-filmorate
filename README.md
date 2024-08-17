@@ -24,5 +24,12 @@ LEFT JOIN friends ON friends.user_id = users.user_id
 GROUP BY user;
 ```
 
+**Get a genre's film count**
+```
+SELECT genre.name, COUNT(films_genre.film_id) AS count
+FROM genre
+LEFT JOIN films_genre ON films_genre.genre_id=genre.id
+GROUP BY genre.name;
+```
 
 
