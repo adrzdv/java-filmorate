@@ -34,7 +34,7 @@ GROUP BY genre.name;
 
 **Get a film rate by users**
 ```
-SELECT films.title, COUNT (likes.user_id) AS rate
+SELECT films.title, AVG(likes.user_id) AS rate
 FROM films
 INNER JOIN likes ON likes.film_id=films.id
 GROUP BY films.title;
