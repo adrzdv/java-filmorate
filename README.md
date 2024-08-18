@@ -32,7 +32,7 @@ LEFT JOIN films_genre ON films_genre.genre_id=genre.id
 GROUP BY genre.name;
 ```
 
-***Get a film rate by users***
+**Get a film rate by users**
 ```
 SELECT films.title, COUNT (likes.user_id) AS rate
 FROM films
