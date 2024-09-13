@@ -78,7 +78,7 @@ class UserDbStorageTest {
                 .birthday(LocalDate.of(1992, 01, 01))
                 .build();
 
-        User user2= User.builder()
+        User user2 = User.builder()
                 .name("Another User")
                 .login("someLogin")
                 .email("bbbbb@gmail.com")

@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -61,7 +60,7 @@ public class FilmService {
      * @return Collection of film
      */
 
-    public Collection<Film> getMostPopular(int count) {
+    public List<Film> getMostPopular(int count) {
 
         return filmStorage.getMostRated(count);
 
