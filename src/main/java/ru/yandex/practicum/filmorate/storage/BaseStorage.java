@@ -4,6 +4,11 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 
 import java.util.*;
 
+/**
+ * Base storage for MpaStorage and GenreStorage
+ *
+ * @param <T>
+ */
 public interface BaseStorage<T> {
 
     public List<T> getAll();
