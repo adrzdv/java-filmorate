@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.*;
@@ -9,15 +10,11 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
     private final UserStorage userStorage;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-
-    }
 
     /**
      * Add a new friend to current user
@@ -28,11 +25,21 @@ public class UserService {
      * @throws NotFoundException
      * @throws DuplicateException
      */
-    public List<User> addFriend(Long idUser, Long idFriend) throws NotFoundException,
-            DuplicateException {
+    public int addFriend(Long idUser, Long idFriend) throws NotFoundException {
 
         return userStorage.addFriend(idUser, idFriend);
 
+    }
+
+    /**
+     * Get current user
+     *
+     * @param id
+     * @return
+     */
+    public User getUser(Long id) {
+
+        return userStorage.getUser(id);
     }
 
     /**
@@ -43,7 +50,7 @@ public class UserService {
      * @return List of users
      * @throws NotFoundException
      */
-    public List<User> deleteFriend(Long idUser, Long idFriend) throws NotFoundException {
+    public int deleteFriend(Long idUser, Long idFriend) throws NotFoundException {
 
         return userStorage.deleteFriend(idUser, idFriend);
 

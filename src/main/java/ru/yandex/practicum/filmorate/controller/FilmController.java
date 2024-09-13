@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
 import ru.yandex.practicum.filmorate.exceptions.DuplicateException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
@@ -31,10 +32,23 @@ public class FilmController {
      * @return Film
      */
     @PostMapping
-    public Film addNew(@Valid @RequestBody Film film) {
+    public Film addNew(@Valid @RequestBody Film film) throws NotFoundException, BadRequest {
 
         return filmService.addNew(film);
 
+    }
+
+    /**
+     * Get a film by id
+     *
+     * @param id
+     * @return Film object
+     * @throws NotFoundException
+     */
+    @GetMapping("/{id}")
+    @ResponseBody
+    public Film getFilm(@PathVariable Long id) throws NotFoundException {
+        return filmService.getFilm(id);
     }
 
     /**
@@ -55,10 +69,10 @@ public class FilmController {
     /**
      * Get all existing films
      *
-     * @return Collection of Film
+     * @return List of Film
      */
     @GetMapping
-    public Collection<Film> getAll() {
+    public List<Film> getAll() {
 
         return filmService.getAll();
 
@@ -73,7 +87,7 @@ public class FilmController {
      */
     @PutMapping(value = "/{id}/like/{userId}")
     public Film like(@PathVariable Long id,
-                     @PathVariable Long userId) throws NotFoundException, DuplicateException, ConditionsException {
+                     @PathVariable Long userId) throws NotFoundException, DuplicateException {
 
         return filmService.addLike(id, userId);
     }

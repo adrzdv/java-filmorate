@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.validators.DurationValidation;
 import ru.yandex.practicum.filmorate.validators.ReleaseValidation;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Film class
@@ -17,15 +17,14 @@ import java.util.Set;
  * description - film description, max length - 200 symbols
  * releaseDate - film's release date, must be not early 28.12.1895
  * duration - film's duration, must be positive value
- * likes - collection of friend's id putted likes
+ * mpa - id of mpa-rating
+ * genre - list of genres
  */
 
 @Getter
 @Setter
-@ToString
 @EqualsAndHashCode(of = {"id"})
 @Builder
-@AllArgsConstructor
 public class Film {
 
     private Long id;
@@ -37,8 +36,7 @@ public class Film {
     private LocalDate releaseDate;
     @DurationValidation
     private Long duration;
-    private Set<Long> likes;
-    private int likesCount;
-
+    private MpaRating mpa;
+    private List<Genre> genres;
 
 }

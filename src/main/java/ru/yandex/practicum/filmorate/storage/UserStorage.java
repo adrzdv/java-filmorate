@@ -4,7 +4,6 @@ import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface UserStorage {
 
@@ -24,7 +23,7 @@ public interface UserStorage {
      * @throws NotFoundException
      * @throws ConditionsException
      */
-    User update(User user) throws NotFoundException, ConditionsException;
+    User update(User user) throws NotFoundException;
 
     /**
      * Get list of user
@@ -40,7 +39,7 @@ public interface UserStorage {
      * @return Optional value of user
      * @throws NotFoundException
      */
-    User getUser(Long id) throws NotFoundException;
+    User getUser(Long id);
 
     /**
      * Get common users
@@ -51,7 +50,7 @@ public interface UserStorage {
      * @throws NotFoundException
      * @throws NoCommonUsers
      */
-    Collection<User> getCommon(Long id, Long otherId) throws NotFoundException, NoCommonUsers;
+    Collection<User> getCommon(Long id, Long otherId);
 
     /**
      * Get user's friend-list
@@ -66,11 +65,10 @@ public interface UserStorage {
      *
      * @param idUser   user's id
      * @param idFriend friend's id to add
-     * @return List of users
      * @throws NotFoundException
      * @throws DuplicateException
      */
-    List<User> addFriend(Long idUser, Long idFriend) throws NotFoundException, DuplicateException;
+    int addFriend(Long idUser, Long idFriend) throws NotFoundException;
 
     /**
      * Delete user's friend
@@ -80,6 +78,6 @@ public interface UserStorage {
      * @return List of users
      * @throws NotFoundException
      */
-    List<User> deleteFriend(Long idUser, Long idFriend) throws NotFoundException;
+    int deleteFriend(Long idUser, Long idFriend) throws NotFoundException;
 
 }

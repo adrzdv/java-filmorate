@@ -64,6 +64,13 @@ public class UserController {
 
     }
 
+    @GetMapping("/{id}")
+    @ResponseBody
+    public User getUser(@PathVariable Long id) {
+
+        return userService.getUser(id);
+    }
+
 
     /**
      * Add a new friend to current user
@@ -75,8 +82,8 @@ public class UserController {
      * @throws NotFoundException
      */
     @PutMapping(value = "/{id}/friends/{friendId}")
-    public Collection<User> addFriend(@PathVariable Long id,
-                                      @PathVariable Long friendId) throws DuplicateException, NotFoundException {
+    public int addFriend(@PathVariable Long id,
+                         @PathVariable Long friendId) throws DuplicateException, NotFoundException {
         return userService.addFriend(id, friendId);
     }
 
@@ -90,8 +97,8 @@ public class UserController {
      */
     @DeleteMapping(value = "/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> deleteFriend(@PathVariable Long id,
-                                         @PathVariable Long friendId) throws NotFoundException {
+    int deleteFriend(@PathVariable Long id,
+                     @PathVariable Long friendId) throws NotFoundException {
         return userService.deleteFriend(id, friendId);
     }
 

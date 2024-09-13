@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
 import ru.yandex.practicum.filmorate.exceptions.DuplicateException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
@@ -10,18 +12,14 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
-
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-    }
 
     /**
      * Add a like to film
@@ -34,7 +32,12 @@ public class FilmService {
      */
     public Film addLike(Long id, Long userId) throws NotFoundException, DuplicateException {
 
-        return filmStorage.addLike(id, userId, userStorage);
+        return filmStorage.addLike(id, userId);
+    }
+
+    public Film getFilm(Long id) throws NotFoundException {
+
+        return filmStorage.getFilm(id);
     }
 
     /**
@@ -48,7 +51,7 @@ public class FilmService {
 
     public Film deleteLike(Long id, Long userId) throws NotFoundException {
 
-        return filmStorage.removeLike(id, userId, userStorage);
+        return filmStorage.removeLike(id, userId);
 
     }
 
@@ -72,7 +75,7 @@ public class FilmService {
      * @return Film
      */
 
-    public Film addNew(Film film) {
+    public Film addNew(Film film) throws NotFoundException, BadRequest {
 
         return filmStorage.addNew(film);
     }
@@ -96,7 +99,7 @@ public class FilmService {
      *
      * @return Collection of film
      */
-    public Collection<Film> getAll() {
+    public List<Film> getAll() {
 
         return filmStorage.getAll();
     }
