@@ -25,10 +25,14 @@ public class MpaStorage implements BaseStorage {
     }
 
     @Override
-    public Optional<MpaRating> getOne(int id) throws NotFoundException {
+    public MpaRating getOne(int id) throws NotFoundException {
         String query = "SELECT * FROM MPA WHERE ID = ?";
         try {
-            return Optional.ofNullable(jdbc.queryForObject(query, mpaMapper, id));
+            Optional<MpaRating> mpaOptional =  Optional.ofNullable(jdbc.queryForObject(query, mpaMapper, id));
+            if (mpaOptional.isEmpty()) {
+                throw new NotFoundException("MPA not found");
+            }
+            return mpaOptional.get();
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException("MPA not found");
         }

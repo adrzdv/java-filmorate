@@ -11,7 +11,20 @@ import java.util.*;
  */
 public interface BaseStorage<T> {
 
+    /**
+     * Get all objects
+     *
+     * @return List of Mpa or Genre objects
+     */
     public List<T> getAll();
 
-    public Optional<T> getOne(int id) throws NotFoundException;
+
+    /**
+     * Get a one object of Mpa or Genre
+     *
+     * @param id
+     * @return Object
+     * @throws NotFoundException
+     */
+    public Object getOne(int id) throws NotFoundException;
 }

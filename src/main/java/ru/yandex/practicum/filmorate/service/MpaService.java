@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.MpaRating;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -19,7 +18,7 @@ public class MpaService {
         return mpaStorage.getAll();
     }
 
-    public Optional<MpaRating> getMpa(int id) throws NotFoundException {
+    public MpaRating getMpa(int id) throws NotFoundException {
 
         return mpaStorage.getOne(id);
     }

@@ -26,7 +26,7 @@ public class UserDbStorage implements UserStorage {
 
         String query = "INSERT INTO USERS (NAME, LOGIN, EMAIL, BIRTHDATE) VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        long key = 0L;
+        long key;
 
         if (user.getName().isEmpty()) {
             key = insertNewUser(keyHolder, query, user.getLogin(), user.getLogin(), user.getEmail(), user.getBirthday());
@@ -117,7 +117,19 @@ public class UserDbStorage implements UserStorage {
 
     }
 
-    private long insertNewUser(KeyHolder keyHolder, String query, String name, String login, String email, LocalDate birthdate) {
+    /**
+     * Add new user in database
+     *
+     * @param keyHolder
+     * @param query
+     * @param name
+     * @param login
+     * @param email
+     * @param birthdate
+     * @return key of added object
+     */
+    private long insertNewUser(KeyHolder keyHolder, String query, String name, String login,
+                               String email, LocalDate birthdate) {
 
         jdbc.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(query, new String[]{"id"});
@@ -131,13 +143,19 @@ public class UserDbStorage implements UserStorage {
         return keyHolder.getKey().longValue();
     }
 
+    /**
+     * Method for check an id
+     *
+     * @param id
+     * @return boolean
+     */
     private boolean checkId(long id) {
         String query = "SELECT NAME FROM USERS WHERE ID = ?";
         try {
-            Optional.ofNullable(jdbc.queryForObject(query, String.class, id));
+            Optional<String> checkString = Optional.ofNullable(jdbc.queryForObject(query, String.class, id));
+            return checkString.isPresent();
         } catch (EmptyResultDataAccessException e) {
             return false;
         }
-        return true;
     }
 }

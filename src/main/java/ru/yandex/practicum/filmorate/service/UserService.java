@@ -20,9 +20,8 @@ public class UserService {
      *
      * @param idUser   current user's id
      * @param idFriend friend's id
-     * @return List of users
+     * @return int (1 - if method execute success)
      * @throws NotFoundException
-     * @throws DuplicateException
      */
     public int addFriend(Long idUser, Long idFriend) throws NotFoundException {
 
@@ -33,8 +32,8 @@ public class UserService {
     /**
      * Get current user
      *
-     * @param id
-     * @return
+     * @param id User's id
+     * @return User
      */
     public User getUser(Long id) {
 
@@ -46,7 +45,7 @@ public class UserService {
      *
      * @param idUser   current user's id
      * @param idFriend friend's id
-     * @return List of users
+     * @return int (1 - if method execute success)
      * @throws NotFoundException
      */
     public int deleteFriend(Long idUser, Long idFriend) throws NotFoundException {
@@ -59,9 +58,10 @@ public class UserService {
      * Get all friends of current user
      *
      * @param id current user's id
-     * @return Collection of users
+     * @return List of users
+     * @throws NotFoundException
      */
-    public Collection<User> getFriends(Long id) throws NotFoundException {
+    public List<User> getFriends(Long id) throws NotFoundException {
 
         return userStorage.getFriends(id);
 
@@ -72,11 +72,9 @@ public class UserService {
      *
      * @param id      first user's id
      * @param otherId another user's id
-     * @return Collection of users
-     * @throws NotFoundException
-     * @throws NoCommonUsers
+     * @return List of users
      */
-    public Collection<User> getCommon(Long id, Long otherId) throws NotFoundException, NoCommonUsers {
+    public List<User> getCommon(Long id, Long otherId) {
 
         return userStorage.getCommon(id, otherId);
 
@@ -98,10 +96,9 @@ public class UserService {
      *
      * @param user user object for update
      * @return User
-     * @throws ConditionsException
      * @throws NotFoundException
      */
-    public User update(User user) throws ConditionsException, NotFoundException {
+    public User update(User user) throws NotFoundException {
 
         return userStorage.update(user);
     }
@@ -109,9 +106,9 @@ public class UserService {
     /**
      * Get collection of existing users
      *
-     * @return Collection of users
+     * @return List of users
      */
-    public Collection<User> getAll() {
+    public List<User> getAll() {
 
         return userStorage.getAll();
     }

@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.storage;
 
 
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
-import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
-import ru.yandex.practicum.filmorate.exceptions.DuplicateException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -24,10 +22,8 @@ public interface FilmStorage {
      *
      * @param film film for update
      * @return Film
-     * @throws ConditionsException
-     * @throws NotFoundException
      */
-    Film update(Film film) throws ConditionsException, NotFoundException;
+    Film update(Film film);
 
     /**
      * Get all existing films
@@ -51,8 +47,6 @@ public interface FilmStorage {
      * @param id          film's id
      * @param userId      user's id
      * @return Film
-     * @throws NotFoundException
-     * @throws DuplicateException
      */
     Film addLike(Long id, Long userId);
 
@@ -61,7 +55,7 @@ public interface FilmStorage {
      * Returns list of the most rated films
      *
      * @param count size of returning list
-     * @return Collection of film
+     * @return List of film
      */
     List<Film> getMostRated(int count);
 
@@ -71,7 +65,6 @@ public interface FilmStorage {
      * @param id          film's id
      * @param userId      user's id
      * @return Film
-     * @throws NotFoundException
      */
     Film removeLike(Long id, Long userId);
 

@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.model.MpaRating;
 import ru.yandex.practicum.filmorate.service.MpaService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/mpa")
@@ -28,7 +27,7 @@ public class MpaController {
     }
 
     @GetMapping(value = "/{id}")
-    public Optional<MpaRating> getMpa(@PathVariable int id) throws NotFoundException {
+    public MpaRating getMpa(@PathVariable int id) throws NotFoundException {
 
         return mpaService.getMpa(id);
     }

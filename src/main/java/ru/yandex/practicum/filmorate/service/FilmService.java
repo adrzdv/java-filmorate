@@ -3,12 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
-import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
-import ru.yandex.practicum.filmorate.exceptions.DuplicateException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 
@@ -17,7 +14,6 @@ import java.util.List;
 public class FilmService {
 
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
 
     /**
      * Add a like to film
@@ -25,14 +21,19 @@ public class FilmService {
      * @param id     film's id
      * @param userId user's id
      * @return Film
-     * @throws NotFoundException
-     * @throws DuplicateException
      */
-    public Film addLike(Long id, Long userId) throws NotFoundException, DuplicateException {
+    public Film addLike(Long id, Long userId) {
 
         return filmStorage.addLike(id, userId);
     }
 
+    /**
+     * Get an existing film by id
+     *
+     * @param id
+     * @return Film
+     * @throws NotFoundException
+     */
     public Film getFilm(Long id) throws NotFoundException {
 
         return filmStorage.getFilm(id);
@@ -44,10 +45,9 @@ public class FilmService {
      * @param id     film's id
      * @param userId user's id
      * @return Film
-     * @throws NotFoundException
      */
 
-    public Film deleteLike(Long id, Long userId) throws NotFoundException {
+    public Film deleteLike(Long id, Long userId) {
 
         return filmStorage.removeLike(id, userId);
 
@@ -83,11 +83,10 @@ public class FilmService {
      *
      * @param film film object for update
      * @return Film
-     * @throws ConditionsException
      * @throws NotFoundException
      */
 
-    public Film update(Film film) throws ConditionsException, NotFoundException {
+    public Film update(Film film) throws NotFoundException {
 
         return filmStorage.update(film);
     }

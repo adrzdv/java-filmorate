@@ -30,6 +30,8 @@ public class FilmController {
      *
      * @param film new film object
      * @return Film
+     * @throws NotFoundException
+     * @throws BadRequest
      */
     @PostMapping
     public Film addNew(@Valid @RequestBody Film film) throws NotFoundException, BadRequest {
@@ -41,7 +43,7 @@ public class FilmController {
     /**
      * Get a film by id
      *
-     * @param id
+     * @param id film's id
      * @return Film object
      * @throws NotFoundException
      */
@@ -60,7 +62,7 @@ public class FilmController {
      * @throws NotFoundException
      */
     @PutMapping
-    public Film update(@Valid @RequestBody Film film) throws ConditionsException, NotFoundException {
+    public Film update(@Valid @RequestBody Film film) throws NotFoundException {
 
         return filmService.update(film);
     }
@@ -101,16 +103,17 @@ public class FilmController {
      */
     @DeleteMapping(value = "/{id}/like/{userId}")
     public Film dislike(@PathVariable Long id,
-                        @PathVariable Long userId) throws ConditionsException, NotFoundException {
+                        @PathVariable Long userId) {
 
         return filmService.deleteLike(id, userId);
     }
 
     /**
-     * Get first the most popular list of film. Default value for return = 10
+     * Get first the most popular list of film.
+     * Default value for return = 10
      *
      * @param count number of films for present
-     * @return Collection of films
+     * @return List of films
      */
     @GetMapping(value = "popular")
     public List<Film> getMostPopular(@RequestParam(defaultValue = "10") int count) {

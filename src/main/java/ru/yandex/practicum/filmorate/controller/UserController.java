@@ -42,11 +42,10 @@ public class UserController {
      *
      * @param user current user object
      * @return User object
-     * @throws ConditionsException
      * @throws NotFoundException
      */
     @PutMapping
-    public User update(@Valid @RequestBody User user) throws ConditionsException, NotFoundException {
+    public User update(@Valid @RequestBody User user) throws NotFoundException {
 
         return userService.update(user);
     }
@@ -58,12 +57,18 @@ public class UserController {
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getAllUsers() {
+    public List<User> getAllUsers() {
 
         return userService.getAll();
 
     }
 
+    /**
+     * Get an existing user by id
+     *
+     * @param id User's id
+     * @return User
+     */
     @GetMapping("/{id}")
     @ResponseBody
     public User getUser(@PathVariable Long id) {
@@ -78,12 +83,11 @@ public class UserController {
      * @param id       user's id
      * @param friendId friend's id
      * @return Collection of users
-     * @throws DuplicateException
      * @throws NotFoundException
      */
     @PutMapping(value = "/{id}/friends/{friendId}")
     public int addFriend(@PathVariable Long id,
-                         @PathVariable Long friendId) throws DuplicateException, NotFoundException {
+                         @PathVariable Long friendId) throws NotFoundException {
         return userService.addFriend(id, friendId);
     }
 
@@ -92,12 +96,12 @@ public class UserController {
      *
      * @param id       user's id
      * @param friendId friend's id
-     * @return Collection of users
+     * @return int (1 - if method execute success)
      * @throws NotFoundException
      */
     @DeleteMapping(value = "/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
-    int deleteFriend(@PathVariable Long id,
+    public int deleteFriend(@PathVariable Long id,
                      @PathVariable Long friendId) throws NotFoundException {
         return userService.deleteFriend(id, friendId);
     }
@@ -107,12 +111,12 @@ public class UserController {
      * Get all user's friends
      *
      * @param id current user's id
-     * @return Collection of users
+     * @return List of users
      * @throws NotFoundException
      */
     @GetMapping(value = "/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getFriends(@PathVariable Long id) throws NotFoundException {
+    public List<User> getFriends(@PathVariable Long id) throws NotFoundException {
         return userService.getFriends(id);
     }
 
@@ -121,14 +125,12 @@ public class UserController {
      *
      * @param id      first user's id
      * @param otherId another user's id
-     * @return Collection of users
-     * @throws NotFoundException
-     * @throws NoCommonUsers
+     * @return List of users
      */
     @GetMapping(value = "{id}/friends/common/{otherId}")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> getCommon(@PathVariable Long id,
-                                      @PathVariable Long otherId) throws NotFoundException, NoCommonUsers {
+    public List<User> getCommon(@PathVariable Long id,
+                                      @PathVariable Long otherId) {
         return userService.getCommon(id, otherId);
     }
 

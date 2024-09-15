@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -19,7 +18,7 @@ public class GenreService {
         return genreStorage.getAll();
     }
 
-    public Optional<Genre> getGenre(int id) throws NotFoundException {
+    public Genre getGenre(int id) throws NotFoundException {
 
         return genreStorage.getOne(id);
     }

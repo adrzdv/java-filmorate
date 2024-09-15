@@ -151,6 +151,13 @@ public class FilmDbStorage implements FilmStorage {
         return getFilm(id);
     }
 
+    /**
+     * Remove duplicate film genres
+     *
+     * @param film
+     * @return Film
+     * @throws BadRequest
+     */
     private Film deleteDuplicates(Film film) throws BadRequest {
 
         if (film.getGenres() == null) {

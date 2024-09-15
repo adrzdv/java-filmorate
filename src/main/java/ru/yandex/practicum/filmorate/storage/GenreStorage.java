@@ -24,10 +24,14 @@ public class GenreStorage implements BaseStorage {
     }
 
     @Override
-    public Optional<Genre> getOne(int id) throws NotFoundException {
+    public Genre getOne(int id) throws NotFoundException {
         String query = "SELECT * FROM GENRE WHERE ID = ?";
         try {
-            return Optional.ofNullable(jdbc.queryForObject(query, genreMapper, id));
+            Optional<Genre> genreOptional = Optional.ofNullable(jdbc.queryForObject(query, genreMapper, id));
+            if (genreOptional.isEmpty()) {
+                throw new NotFoundException("Genre not found");
+            }
+            return genreOptional.get();
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException("Genre not found");
         }
