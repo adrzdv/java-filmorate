@@ -20,12 +20,11 @@ public class UserService {
      *
      * @param idUser   current user's id
      * @param idFriend friend's id
-     * @return int (1 - if method execute success)
      * @throws NotFoundException
      */
-    public int addFriend(Long idUser, Long idFriend) throws NotFoundException {
+    public void addFriend(Long idUser, Long idFriend) throws NotFoundException {
 
-        return userStorage.addFriend(idUser, idFriend);
+        userStorage.addFriend(idUser, idFriend);
 
     }
 
@@ -45,12 +44,11 @@ public class UserService {
      *
      * @param idUser   current user's id
      * @param idFriend friend's id
-     * @return int (1 - if method execute success)
      * @throws NotFoundException
      */
-    public int deleteFriend(Long idUser, Long idFriend) throws NotFoundException {
+    public void deleteFriend(Long idUser, Long idFriend) throws NotFoundException {
 
-        return userStorage.deleteFriend(idUser, idFriend);
+        userStorage.deleteFriend(idUser, idFriend);
 
     }
 
@@ -104,7 +102,7 @@ public class UserService {
     }
 
     /**
-     * Get collection of existing users
+     * Get list of existing users
      *
      * @return List of users
      */

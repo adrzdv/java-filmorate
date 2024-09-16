@@ -4,6 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * Mpa object class
+ * <p>
+ * id - identification number
+ * name - MPA name
+ */
 @AllArgsConstructor
 @Builder
 @Data

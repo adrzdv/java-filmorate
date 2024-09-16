@@ -23,6 +23,9 @@ import java.util.*;
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbc;
     private final FilmMapper filmMapper;
+    private final MpaMapper mpaMapper;
+    private final FilmResultExtractor filmResultExtractor;
+    private final FilmRatedMapper filmRatedMapper;
 
     @Override
     public Film addNew(Film filmAdd) throws BadRequest {
@@ -41,7 +44,7 @@ public class FilmDbStorage implements FilmStorage {
 
         try {
             String queryMpa = "SELECT * FROM MPA WHERE ID = ?";
-            MpaRating mpa = jdbc.queryForObject(queryMpa, new MpaMapper(), film.getMpa().getId());
+            MpaRating mpa = jdbc.queryForObject(queryMpa, mpaMapper, film.getMpa().getId());
         } catch (EmptyResultDataAccessException e) {
             throw new BadRequest("Some troubles");
         }
@@ -102,7 +105,7 @@ public class FilmDbStorage implements FilmStorage {
                 "LEFT JOIN FILMS_GENRE ON FILMS.ID = FILMS_GENRE.FILM_ID " +
                 "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID ORDER BY FILMS.ID";
 
-        return jdbc.query(query, new FilmResultExtractor());
+        return jdbc.query(query, filmResultExtractor);
     }
 
     @Override
@@ -140,7 +143,7 @@ public class FilmDbStorage implements FilmStorage {
                 "GROUP BY FILMS.ID " +
                 "ORDER BY likes DESC LIMIT ?";
 
-        return jdbc.query(query, new FilmRatedMapper(), count);
+        return jdbc.query(query, filmRatedMapper, count);
     }
 
     @Override

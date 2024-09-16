@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,10 @@ import java.util.*;
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@AllArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    public UserController(UserService userService) {
-
-        this.userService = userService;
-    }
 
     /**
      * Add a new user
@@ -53,7 +51,7 @@ public class UserController {
     /**
      * Get list of all users
      *
-     * @return Collection of users
+     * @return List of users
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -82,13 +80,12 @@ public class UserController {
      *
      * @param id       user's id
      * @param friendId friend's id
-     * @return Collection of users
      * @throws NotFoundException
      */
     @PutMapping(value = "/{id}/friends/{friendId}")
-    public int addFriend(@PathVariable Long id,
-                         @PathVariable Long friendId) throws NotFoundException {
-        return userService.addFriend(id, friendId);
+    public void addFriend(@PathVariable Long id,
+                          @PathVariable Long friendId) throws NotFoundException {
+        userService.addFriend(id, friendId);
     }
 
     /**
@@ -96,14 +93,13 @@ public class UserController {
      *
      * @param id       user's id
      * @param friendId friend's id
-     * @return int (1 - if method execute success)
      * @throws NotFoundException
      */
     @DeleteMapping(value = "/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
-    public int deleteFriend(@PathVariable Long id,
-                     @PathVariable Long friendId) throws NotFoundException {
-        return userService.deleteFriend(id, friendId);
+    public void deleteFriend(@PathVariable Long id,
+                             @PathVariable Long friendId) throws NotFoundException {
+        userService.deleteFriend(id, friendId);
     }
 
 
@@ -130,7 +126,7 @@ public class UserController {
     @GetMapping(value = "{id}/friends/common/{otherId}")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getCommon(@PathVariable Long id,
-                                      @PathVariable Long otherId) {
+                                @PathVariable Long otherId) {
         return userService.getCommon(id, otherId);
     }
 

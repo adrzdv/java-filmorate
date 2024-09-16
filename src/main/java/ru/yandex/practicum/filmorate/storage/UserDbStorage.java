@@ -20,6 +20,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbc;
+    private final UserMapper userMapper;
 
     @Override
     public User addNew(User user) {
@@ -52,14 +53,14 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> getAll() {
         String query = "SELECT * FROM USERS";
-        return jdbc.query(query, new UserMapper());
+        return jdbc.query(query, userMapper);
     }
 
     @Override
     public User getUser(Long id) {
 
         String query = "SELECT * FROM USERS WHERE ID = ?";
-        return jdbc.queryForObject(query, new UserMapper(), id);
+        return jdbc.queryForObject(query, userMapper, id);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class UserDbStorage implements UserStorage {
                 "FROM friends\n" +
                 "WHERE user_id = ? AND status = 'APPROVED')";
 
-        return jdbc.query(query, new UserMapper(), id, otherId);
+        return jdbc.query(query, userMapper, id, otherId);
     }
 
     @Override
@@ -86,25 +87,24 @@ public class UserDbStorage implements UserStorage {
         String query = "SELECT ID, NAME, LOGIN, NAME, EMAIL, BIRTHDATE\n" +
                 "FROM USERS WHERE id IN\n" +
                 "(SELECT friend_id FROM friends where user_id = ?)";
-        return jdbc.query(query, new UserMapper(), id);
+        return jdbc.query(query, userMapper, id);
 
     }
 
     @Override
-    public int addFriend(Long idUser, Long idFriend) throws NotFoundException {
+    public void addFriend(Long idUser, Long idFriend) throws NotFoundException {
 
-        String query = "INSERT INTO FRIENDS (USER_ID, FRIEND_ID, STATUS) VALUES (?, ?, ?)";
-        int res = jdbc.update(query, idUser, idFriend, Status.APPROVED.toString());
         if (!checkId(idUser)) {
             throw new NotFoundException("User not found");
         } else if (!checkId(idFriend)) {
             throw new NotFoundException("Friend not found");
         }
-        return res;
+        String query = "INSERT INTO FRIENDS (USER_ID, FRIEND_ID, STATUS) VALUES (?, ?, ?)";
+        jdbc.update(query, idUser, idFriend, Status.APPROVED.toString());
     }
 
     @Override
-    public int deleteFriend(Long idUser, Long idFriend) throws NotFoundException {
+    public void deleteFriend(Long idUser, Long idFriend) throws NotFoundException {
 
         if (!checkId(idUser)) {
             throw new NotFoundException("User not found");
@@ -113,7 +113,7 @@ public class UserDbStorage implements UserStorage {
         }
 
         String query = "DELETE FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
-        return jdbc.update(query, idUser, idFriend);
+        jdbc.update(query, idUser, idFriend);
 
     }
 

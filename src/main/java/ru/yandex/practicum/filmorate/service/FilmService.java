@@ -57,7 +57,7 @@ public class FilmService {
      * Returns list of the most rated films
      *
      * @param count size of returning list
-     * @return Collection of film
+     * @return List of film
      */
 
     public List<Film> getMostPopular(int count) {
@@ -92,9 +92,9 @@ public class FilmService {
     }
 
     /**
-     * Get collection of all existing films
+     * Get List of all existing films
      *
-     * @return Collection of film
+     * @return List of film
      */
     public List<Film> getAll() {
 

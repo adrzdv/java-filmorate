@@ -28,7 +28,7 @@ public interface FilmStorage {
     /**
      * Get all existing films
      *
-     * @return Collection of film
+     * @return List of film
      */
     List<Film> getAll();
 

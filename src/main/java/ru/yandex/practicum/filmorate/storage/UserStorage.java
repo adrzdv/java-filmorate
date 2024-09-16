@@ -36,7 +36,6 @@ public interface UserStorage {
      *
      * @param id current user's id
      * @return User object
-     * @throws NotFoundException
      */
     User getUser(Long id);
 
@@ -46,7 +45,6 @@ public interface UserStorage {
      * @param id      first user's id
      * @param otherId other user's id
      * @return List of users
-     * @throws NotFoundException
      */
     List<User> getCommon(Long id, Long otherId);
 
@@ -59,23 +57,21 @@ public interface UserStorage {
     List<User> getFriends(Long id) throws NotFoundException;
 
     /**
-     * Add a new user's friend
+     * Add a new friend to friend list
      *
      * @param idUser   user's id
-     * @param idFriend friend's id to add
-     * @return int (1 - if method execute success)
+     * @param idFriend friend's id
      * @throws NotFoundException
      */
-    int addFriend(Long idUser, Long idFriend) throws NotFoundException;
+    void addFriend(Long idUser, Long idFriend) throws NotFoundException;
 
     /**
      * Delete user's friend
      *
      * @param idUser   user's id
      * @param idFriend friend's id to remove
-     * @return int (1 - if method execute success)
      * @throws NotFoundException
      */
-    int deleteFriend(Long idUser, Long idFriend) throws NotFoundException;
+    void deleteFriend(Long idUser, Long idFriend) throws NotFoundException;
 
 }

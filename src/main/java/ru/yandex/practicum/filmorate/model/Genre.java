@@ -5,6 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Genre object class
+ * <p>
+ * id - identification number
+ * name - name of genre
+ */
 @AllArgsConstructor
 @Builder
 @Data
