@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface UserStorage {
@@ -22,64 +21,57 @@ public interface UserStorage {
      * @param user current user object
      * @return User object
      * @throws NotFoundException
-     * @throws ConditionsException
      */
-    User update(User user) throws NotFoundException, ConditionsException;
+    User update(User user) throws NotFoundException;
 
     /**
      * Get list of user
      *
-     * @return Collection of users
+     * @return List of users
      */
-    Collection<User> getAll();
+    List<User> getAll();
 
     /**
      * Get current user by id
      *
      * @param id current user's id
-     * @return Optional value of user
-     * @throws NotFoundException
+     * @return User object
      */
-    User getUser(Long id) throws NotFoundException;
+    User getUser(Long id);
 
     /**
      * Get common users
      *
      * @param id      first user's id
      * @param otherId other user's id
-     * @return Collection of users
-     * @throws NotFoundException
-     * @throws NoCommonUsers
+     * @return List of users
      */
-    Collection<User> getCommon(Long id, Long otherId) throws NotFoundException, NoCommonUsers;
+    List<User> getCommon(Long id, Long otherId);
 
     /**
      * Get user's friend-list
      *
      * @param id user's id
-     * @return Collection of users
+     * @return List of users
      */
-    Collection<User> getFriends(Long id) throws NotFoundException;
+    List<User> getFriends(Long id) throws NotFoundException;
 
     /**
-     * Add a new user's friend
+     * Add a new friend to friend list
      *
      * @param idUser   user's id
-     * @param idFriend friend's id to add
-     * @return List of users
+     * @param idFriend friend's id
      * @throws NotFoundException
-     * @throws DuplicateException
      */
-    List<User> addFriend(Long idUser, Long idFriend) throws NotFoundException, DuplicateException;
+    void addFriend(Long idUser, Long idFriend) throws NotFoundException;
 
     /**
      * Delete user's friend
      *
      * @param idUser   user's id
      * @param idFriend friend's id to remove
-     * @return List of users
      * @throws NotFoundException
      */
-    List<User> deleteFriend(Long idUser, Long idFriend) throws NotFoundException;
+    void deleteFriend(Long idUser, Long idFriend) throws NotFoundException;
 
 }

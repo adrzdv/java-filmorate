@@ -1,12 +1,11 @@
 package ru.yandex.practicum.filmorate.storage;
 
 
-import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
-import ru.yandex.practicum.filmorate.exceptions.DuplicateException;
+import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface FilmStorage {
 
@@ -16,24 +15,22 @@ public interface FilmStorage {
      * @param film film for adding
      * @return Film
      */
-    Film addNew(Film film);
+    Film addNew(Film film) throws NotFoundException, BadRequest;
 
     /**
      * Updating an existing film
      *
      * @param film film for update
      * @return Film
-     * @throws ConditionsException
-     * @throws NotFoundException
      */
-    Film update(Film film) throws ConditionsException, NotFoundException;
+    Film update(Film film);
 
     /**
      * Get all existing films
      *
-     * @return Collection of film
+     * @return List of film
      */
-    Collection<Film> getAll();
+    List<Film> getAll();
 
     /**
      * Get a film by ID
@@ -49,32 +46,27 @@ public interface FilmStorage {
      *
      * @param id          film's id
      * @param userId      user's id
-     * @param userStorage current implementation of UserStorage interface
      * @return Film
-     * @throws NotFoundException
-     * @throws DuplicateException
      */
-    Film addLike(Long id, Long userId, UserStorage userStorage) throws NotFoundException, DuplicateException;
+    Film addLike(Long id, Long userId);
 
 
     /**
      * Returns list of the most rated films
      *
      * @param count size of returning list
-     * @return Collection of film
+     * @return List of film
      */
-    Collection<Film> getMostRated(int count);
+    List<Film> getMostRated(int count);
 
     /**
      * Remove a current user's like
      *
      * @param id          film's id
      * @param userId      user's id
-     * @param userStorage current implementation of UserStorage interface
      * @return Film
-     * @throws NotFoundException
      */
-    Film removeLike(Long id, Long userId, UserStorage userStorage) throws NotFoundException;
+    Film removeLike(Long id, Long userId);
 
 
 }

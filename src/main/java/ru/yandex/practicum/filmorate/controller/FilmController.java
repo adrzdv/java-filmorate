@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
 import ru.yandex.practicum.filmorate.exceptions.DuplicateException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
@@ -29,12 +30,27 @@ public class FilmController {
      *
      * @param film new film object
      * @return Film
+     * @throws NotFoundException
+     * @throws BadRequest
      */
     @PostMapping
-    public Film addNew(@Valid @RequestBody Film film) {
+    public Film addNew(@Valid @RequestBody Film film) throws NotFoundException, BadRequest {
 
         return filmService.addNew(film);
 
+    }
+
+    /**
+     * Get a film by id
+     *
+     * @param id film's id
+     * @return Film object
+     * @throws NotFoundException
+     */
+    @GetMapping("/{id}")
+    @ResponseBody
+    public Film getFilm(@PathVariable Long id) throws NotFoundException {
+        return filmService.getFilm(id);
     }
 
     /**
@@ -46,7 +62,7 @@ public class FilmController {
      * @throws NotFoundException
      */
     @PutMapping
-    public Film update(@Valid @RequestBody Film film) throws ConditionsException, NotFoundException {
+    public Film update(@Valid @RequestBody Film film) throws NotFoundException {
 
         return filmService.update(film);
     }
@@ -55,10 +71,10 @@ public class FilmController {
     /**
      * Get all existing films
      *
-     * @return Collection of Film
+     * @return List of Film
      */
     @GetMapping
-    public Collection<Film> getAll() {
+    public List<Film> getAll() {
 
         return filmService.getAll();
 
@@ -73,7 +89,7 @@ public class FilmController {
      */
     @PutMapping(value = "/{id}/like/{userId}")
     public Film like(@PathVariable Long id,
-                     @PathVariable Long userId) throws NotFoundException, DuplicateException, ConditionsException {
+                     @PathVariable Long userId) throws NotFoundException, DuplicateException {
 
         return filmService.addLike(id, userId);
     }
@@ -87,19 +103,20 @@ public class FilmController {
      */
     @DeleteMapping(value = "/{id}/like/{userId}")
     public Film dislike(@PathVariable Long id,
-                        @PathVariable Long userId) throws ConditionsException, NotFoundException {
+                        @PathVariable Long userId) {
 
         return filmService.deleteLike(id, userId);
     }
 
     /**
-     * Get first the most popular list of film. Default value for return = 10
+     * Get first the most popular list of film.
+     * Default value for return = 10
      *
      * @param count number of films for present
-     * @return Collection of films
+     * @return List of films
      */
     @GetMapping(value = "popular")
-    public Collection<Film> getMostPopular(@RequestParam(defaultValue = "10") int count) {
+    public List<Film> getMostPopular(@RequestParam(defaultValue = "10") int count) {
 
         return filmService.getMostPopular(count);
     }

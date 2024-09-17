@@ -1,5 +1,0 @@
-spring:
-  main:
-    banner-mode: off
-    log-startup-info: true
-logging.level.org.zalando.logbook: TRACE
