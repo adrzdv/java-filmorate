@@ -17,8 +17,9 @@ import java.util.List;
  * description - film description, max length - 200 symbols
  * releaseDate - film's release date, must be not early 28.12.1895
  * duration - film's duration, must be positive value
- * mpa - id of mpa-rating
+ * mpa - object of mpa-rating
  * genre - list of genres
+ * director - object of film's director
  */
 
 @Getter
@@ -38,5 +39,6 @@ public class Film {
     private Long duration;
     private MpaRating mpa;
     private List<Genre> genres;
+    private Director director;
 
 }
