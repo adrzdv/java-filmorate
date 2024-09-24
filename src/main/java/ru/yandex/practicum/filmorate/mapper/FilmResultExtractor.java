@@ -28,7 +28,9 @@ public class FilmResultExtractor implements ResultSetExtractor<List<Film>> {
                         .id(rs.getInt("director_id"))
                         .name(rs.getString("director_name"))
                         .build();
-                filmList.get(rs.getLong("id")).getDirectors().add(director);
+                if (filmList.get(rs.getLong("id")).getDirectors() != null) {
+                    filmList.get(rs.getLong("id")).getDirectors().add(director);
+                }
             } else {
                 Genre genre = Genre.builder()
                         .id(rs.getInt("genre_id"))
