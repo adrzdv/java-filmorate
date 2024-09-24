@@ -8,13 +8,13 @@ import ru.yandex.practicum.filmorate.model.MpaRating;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class FilmMapper implements RowMapper<Film> {
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
-
         List<Genre> genreList = new ArrayList<>();
         Film film = Film.builder()
                 .id(rs.getLong("id"))
@@ -23,23 +23,23 @@ public class FilmMapper implements RowMapper<Film> {
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getLong("duration"))
                 .mpa(MpaRating.builder()
-                        .id(rs.getInt("mpa_id"))
-                        .name(rs.getString("mpa_rate"))
+                        .id(rs.getInt("mpa_id")) // Убедитесь, что столбец mpa_id существует в запросе
+                        .name(rs.getString("mpa_rate")) // Убедитесь, что столбец mpa_rate существует в запросе
                         .build())
                 .build();
 
+        // Теперь добавляем жанры в список, если они есть в результате
         do {
-            if (rs.getInt("genre_id") == 0) {
-                return film;
+            if (rs.getInt("genre_id") > 0) { // Проверяем, что genre_id больше 0
+                Genre genre = Genre.builder()
+                        .id(rs.getInt("genre_id"))
+                        .name(rs.getString("genre"))
+                        .build();
+                genreList.add(genre);
             }
-            Genre genre = Genre.builder()
-                    .id(rs.getInt("genre_id"))
-                    .name(rs.getString("genre"))
-                    .build();
-            genreList.add(genre);
-
         } while (rs.next());
-        film.setGenres(genreList);
+
+        film.setGenres(genreList); // Устанавливаем жанры в фильм
         return film;
     }
 }

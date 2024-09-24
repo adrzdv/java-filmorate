@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS FILMS (
    release_date date,
    duration INTEGER,
    mpa_rate INTEGER REFERENCES mpa(id) ON DELETE CASCADE,
-   director INTEGER REFERENCES directors(id) ON DELETE CASCADE,
    CONSTRAINT films_constraint CHECK (duration > 0 AND release_date > '1895-12-28')
 );
 
@@ -65,4 +64,9 @@ CREATE TABLE IF NOT EXISTS REVIEWS (
     film_id INTEGER REFERENCES films(id),
     review_content VARCHAR,
     useful_rate INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS FILMS_DIRECTORS (
+    film_id INTEGER REFERENCES films(id) ON DELETE CASCADE,
+    director_id INTEGER REFERENCES directors(id) ON DELETE CASCADE
 )

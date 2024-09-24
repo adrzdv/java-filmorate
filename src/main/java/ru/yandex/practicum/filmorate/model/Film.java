@@ -19,7 +19,7 @@ import java.util.List;
  * duration - film's duration, must be positive value
  * mpa - object of mpa-rating
  * genre - list of genres
- * director - object of film's director
+ * director - list of objects of film's director
  */
 
 @Getter
@@ -39,6 +39,6 @@ public class Film {
     private Long duration;
     private MpaRating mpa;
     private List<Genre> genres;
-    private Director director;
+    private List<Director> directors;
 
 }

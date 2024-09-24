@@ -2,13 +2,16 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.*;
+import ru.yandex.practicum.filmorate.exceptions.BadRequest;
+import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
+import ru.yandex.practicum.filmorate.exceptions.DuplicateException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/films")
@@ -112,7 +115,6 @@ public class FilmController {
      *
      * @param count number of films for present
      * @return List of films
-     *
      */
     @GetMapping(value = "popular")
     public List<Film> getMostPopular(@RequestParam(defaultValue = "10") int count) {
@@ -120,14 +122,21 @@ public class FilmController {
         return filmService.getMostPopular(count);
     }
 
+
     @GetMapping("/common")
-    public List<Film> getCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) {
-        return filmService.getCommonFilms(userId, friendId);
+    public ResponseEntity<List<Film>> getCommonFilms(@RequestParam Long userId,
+                                                     @RequestParam Long friendId) throws BadRequest {
+        log.info("Запрос на получение общих фильмов для userId: {}, friendId: {}", userId, friendId);
+
+        // Проверка на null
+        if (userId == null || friendId == null) {
+            throw new BadRequest("userId и friendId не могут быть null");
+        }
+
+        List<Film> commonFilms = filmService.getCommonFilms(userId, friendId);
+
+        return ResponseEntity.ok(commonFilms);
     }
 
-    @ExceptionHandler(NoCommonFilmsException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNoCommonFilmsException(NoCommonFilmsException ex) {
-        return ex.getMessage();
-    }
+
 }

@@ -9,14 +9,18 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
-import ru.yandex.practicum.filmorate.exceptions.NoCommonFilmsException;
-import ru.yandex.practicum.filmorate.mapper.*;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.mapper.FilmRatedMapper;
+import ru.yandex.practicum.filmorate.mapper.FilmResultExtractor;
+import ru.yandex.practicum.filmorate.mapper.MpaMapper;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MpaRating;
 
 import java.sql.PreparedStatement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 @AllArgsConstructor
@@ -75,6 +79,19 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
 
+        if (filmAdd.getDirectors() != null) {
+            List<Director> filmDirectors = film.getDirectors();
+            for (Director director : filmDirectors) {
+                query = "INSERT INTO FILMS_DIRECTORS (FILM_ID, DIRECTOR_ID) " +
+                        "VALUES (?, ?)";
+                try {
+                    jdbc.update(query, key, director.getId());
+                } catch (DataIntegrityViolationException e) {
+                    throw new BadRequest("Some troubles");
+                }
+            }
+        }
+
         return getFilm(key);
     }
 
@@ -84,6 +101,7 @@ public class FilmDbStorage implements FilmStorage {
         String queryFilm = "UPDATE FILMS SET ID = ?, TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, " +
                 "DURATION = ?, MPA_RATE = ? WHERE ID = ?";
         String queryGenres = "UPDATE FILMS_GENRE SET GENRE_ID = ? WHERE FILM_ID = ?";
+        String queryDir = "INSERT INTO FILMS_DIRECTORS (DIRECTOR_ID, FILM_ID) VALUES (?, ?)";
 
         jdbc.update(queryFilm, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getMpa().getId(), film.getId());
@@ -93,6 +111,13 @@ public class FilmDbStorage implements FilmStorage {
                 jdbc.update(queryGenres, genre.getId(), film.getId());
             }
         }
+        if (film.getDirectors() != null) {
+            List<Director> filmDirectors = film.getDirectors();
+            for (Director director : filmDirectors) {
+                jdbc.update(queryDir, director.getId(), film.getId());
+            }
+
+        }
 
         return getFilm(film.getId());
     }
@@ -101,10 +126,14 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> getAll() {
 
         String query = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION, " +
-                "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE FROM FILMS " +
+                "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE, " +
+                "DIRECTORS.ID AS DIRECTOR_ID, DIRECTORS.NAME AS DIRECTOR_NAME FROM FILMS " +
                 "LEFT JOIN MPA ON FILMS.MPA_RATE = MPA.ID " +
                 "LEFT JOIN FILMS_GENRE ON FILMS.ID = FILMS_GENRE.FILM_ID " +
-                "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID ORDER BY FILMS.ID";
+                "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID " +
+                "LEFT JOIN FILMS_DIRECTORS ON FILMS_DIRECTORS.FILM_ID = FILMS.ID " +
+                "LEFT JOIN DIRECTORS ON DIRECTORS.ID = FILMS_DIRECTORS.DIRECTOR_ID " +
+                "ORDER BY FILMS.ID";
 
         return jdbc.query(query, filmResultExtractor);
     }
@@ -113,10 +142,14 @@ public class FilmDbStorage implements FilmStorage {
     public Film getFilm(Long id) {
 
         String query = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION, " +
-                "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE FROM FILMS " +
+                "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE, " +
+                "DIRECTORS.ID AS DIRECTOR_ID, DIRECTORS.NAME AS DIRECTOR_NAME FROM FILMS " +
                 "LEFT JOIN MPA ON FILMS.MPA_RATE = MPA.ID " +
                 "LEFT JOIN FILMS_GENRE ON FILMS.ID = FILMS_GENRE.FILM_ID " +
-                "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID WHERE FILMS.ID = ?" +
+                "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID " +
+                "LEFT JOIN FILMS_DIRECTORS ON FILMS.ID = FILMS_DIRECTORS.FILM_ID " +
+                "LEFT JOIN DIRECTORS ON DIRECTORS.ID = FILMS_DIRECTORS.DIRECTOR_ID " +
+                "WHERE FILMS.ID = ?" +
                 "ORDER BY FILMS.ID";
 
         return jdbc.queryForObject(query, filmMapper, id);
@@ -161,7 +194,6 @@ public class FilmDbStorage implements FilmStorage {
      * @param film
      * @return Film
      * @throws BadRequest
-     *
      */
     private Film deleteDuplicates(Film film) throws BadRequest {
 
@@ -183,20 +215,20 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getCommonFilms(Long userId, Long friendId) {
-        String query = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION, " +
-                "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, COUNT(LIKES.USER_ID) AS LIKES " +
-                "FROM FILMS " +
-                "JOIN LIKES ON FILMS.ID = LIKES.FILM_ID " +
-                "WHERE LIKES.USER_ID IN (?, ?) " +
-                "GROUP BY FILMS.ID " +
-                "HAVING COUNT(DISTINCT LIKES.USER_ID) = 2 " +
-                "ORDER BY LIKES DESC";
+        String query = "SELECT f.id, f.title, f.description, f.release_date, f.duration, " +
+                "mpa.id AS mpa_id, mpa.name AS mpa_rate, " + // Добавьте mpa_id и mpa_rate
+                "genre.id AS genre_id, genre.name AS genre " +
+                "FROM FILMS f " +
+                "LEFT JOIN MPA mpa ON f.mpa_rate = mpa.id " + // Или другой способ получения MPA
+                "LEFT JOIN FILMS_GENRE fg ON f.id = fg.film_id " +
+                "LEFT JOIN GENRE genre ON fg.genre_id = genre.id " +
+                "JOIN LIKES l1 ON f.id = l1.film_id AND l1.user_id = ? " +
+                "JOIN LIKES l2 ON f.id = l2.film_id AND l2.user_id = ?";
 
-        List<Film> commonFilms = jdbc.query(query, filmRatedMapper, userId, friendId);
 
-        if (commonFilms.isEmpty()) {
-            throw new NoCommonFilmsException("No common films");
-        }
+        List<Film> commonFilms = jdbc.query(query, filmMapper, userId, friendId);
+
         return commonFilms;
     }
+
 }
