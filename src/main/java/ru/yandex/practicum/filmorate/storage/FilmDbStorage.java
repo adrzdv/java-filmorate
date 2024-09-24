@@ -9,18 +9,14 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
-import ru.yandex.practicum.filmorate.mapper.FilmMapper;
-import ru.yandex.practicum.filmorate.mapper.FilmRatedMapper;
-import ru.yandex.practicum.filmorate.mapper.FilmResultExtractor;
-import ru.yandex.practicum.filmorate.mapper.MpaMapper;
+import ru.yandex.practicum.filmorate.mapper.*;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MpaRating;
 
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Repository
 @AllArgsConstructor
@@ -216,10 +212,10 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> getCommonFilms(Long userId, Long friendId) {
         String query = "SELECT f.id, f.title, f.description, f.release_date, f.duration, " +
-                "mpa.id AS mpa_id, mpa.name AS mpa_rate, " + // Добавьте mpa_id и mpa_rate
+                "mpa.id AS mpa_id, mpa.name AS mpa_rate, " +
                 "genre.id AS genre_id, genre.name AS genre " +
                 "FROM FILMS f " +
-                "LEFT JOIN MPA mpa ON f.mpa_rate = mpa.id " + // Или другой способ получения MPA
+                "LEFT JOIN MPA mpa ON f.mpa_rate = mpa.id " +
                 "LEFT JOIN FILMS_GENRE fg ON f.id = fg.film_id " +
                 "LEFT JOIN GENRE genre ON fg.genre_id = genre.id " +
                 "JOIN LIKES l1 ON f.id = l1.film_id AND l1.user_id = ? " +
