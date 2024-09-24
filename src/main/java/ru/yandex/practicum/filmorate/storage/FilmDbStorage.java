@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
+import ru.yandex.practicum.filmorate.exceptions.NoCommonFilmsException;
 import ru.yandex.practicum.filmorate.mapper.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -177,5 +178,24 @@ public class FilmDbStorage implements FilmStorage {
         newFilm.setGenres(newGenreList);
 
         return newFilm;
+    }
+
+    @Override
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        String query = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION, " +
+                "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, COUNT(LIKES.USER_ID) AS LIKES " +
+                "FROM FILMS " +
+                "JOIN LIKES ON FILMS.ID = LIKES.FILM_ID " +
+                "WHERE LIKES.USER_ID IN (?, ?) " +
+                "GROUP BY FILMS.ID " +
+                "HAVING COUNT(DISTINCT LIKES.USER_ID) = 2 " +
+                "ORDER BY LIKES DESC";
+
+        List<Film> commonFilms = jdbc.query(query, filmRatedMapper, userId, friendId);
+
+        if (commonFilms.isEmpty()) {
+            throw new NoCommonFilmsException("No common films");
+        }
+        return commonFilms;
     }
 }

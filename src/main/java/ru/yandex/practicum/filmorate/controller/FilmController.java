@@ -2,11 +2,9 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.BadRequest;
-import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
-import ru.yandex.practicum.filmorate.exceptions.DuplicateException;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -121,4 +119,14 @@ public class FilmController {
         return filmService.getMostPopular(count);
     }
 
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
+
+    @ExceptionHandler(NoCommonFilmsException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleNoCommonFilmsException(NoCommonFilmsException ex) {
+        return ex.getMessage();
+    }
 }

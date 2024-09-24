@@ -68,5 +68,5 @@ public interface FilmStorage {
      */
     Film removeLike(Long id, Long userId);
 
-
+    List<Film> getCommonFilms(Long userId, Long friendId);
 }
