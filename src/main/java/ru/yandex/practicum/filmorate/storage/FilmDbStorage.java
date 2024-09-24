@@ -10,6 +10,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.mapper.*;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MpaRating;
@@ -74,6 +75,19 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
 
+        if (filmAdd.getDirectors() != null) {
+            List<Director> filmDirectors = film.getDirectors();
+            for (Director director : filmDirectors) {
+                query = "INSERT INTO FILMS_DIRECTORS () " +
+                        "VALUES (?, ?)";
+                try {
+                    jdbc.update(query, key, director.getId());
+                } catch (DataIntegrityViolationException e) {
+                    throw new BadRequest("Some troubles");
+                }
+            }
+        }
+
         return getFilm(key);
     }
 
@@ -83,6 +97,7 @@ public class FilmDbStorage implements FilmStorage {
         String queryFilm = "UPDATE FILMS SET ID = ?, TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, " +
                 "DURATION = ?, MPA_RATE = ? WHERE ID = ?";
         String queryGenres = "UPDATE FILMS_GENRE SET GENRE_ID = ? WHERE FILM_ID = ?";
+        String queryDirectors = "UPDATE FILMS_DIRECTORS SET DIRECTOR_ID = ? WHERE FILM_ID = ?";
 
         jdbc.update(queryFilm, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getMpa().getId(), film.getId());
@@ -92,6 +107,13 @@ public class FilmDbStorage implements FilmStorage {
                 jdbc.update(queryGenres, genre.getId(), film.getId());
             }
         }
+        if (film.getDirectors() != null) {
+            List<Director> filmDirectors = film.getDirectors();
+            for (Director director : filmDirectors) {
+                jdbc.update(queryDirectors, director.getId(), film.getId());
+            }
+
+        }
 
         return getFilm(film.getId());
     }
@@ -100,10 +122,14 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> getAll() {
 
         String query = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION, " +
-                "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE FROM FILMS " +
+                "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE, " +
+                "DIRECTORS.ID AS DIRECTOR_ID, DIRECTORS.NAME AS DIRECTOR_NAME FROM FILMS " +
                 "LEFT JOIN MPA ON FILMS.MPA_RATE = MPA.ID " +
                 "LEFT JOIN FILMS_GENRE ON FILMS.ID = FILMS_GENRE.FILM_ID " +
-                "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID ORDER BY FILMS.ID";
+                "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID " +
+                "LEFT JOIN FILMS_DIRECTORS ON FILMS_DIRECTORS.FILM_ID = FILMS.ID " +
+                "LEFT JOIN DIRECTORS ON DIRECTORS.ID = FILMS_DIRECTORS.DIRECTOR_ID " +
+                "ORDER BY FILMS.ID";
 
         return jdbc.query(query, filmResultExtractor);
     }
@@ -112,10 +138,14 @@ public class FilmDbStorage implements FilmStorage {
     public Film getFilm(Long id) {
 
         String query = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION, " +
-                "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE FROM FILMS " +
+                "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE, " +
+                "DIRECTORS.ID AS DIRECTOR_ID, DIRECTORS.NAME AS DIRECTOR_NAME FROM FILMS " +
                 "LEFT JOIN MPA ON FILMS.MPA_RATE = MPA.ID " +
                 "LEFT JOIN FILMS_GENRE ON FILMS.ID = FILMS_GENRE.FILM_ID " +
-                "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID WHERE FILMS.ID = ?" +
+                "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID " +
+                "LEFT JOIN FILMS_DIRECTORS ON FILMS.ID = FILMS_DIRECTORS.FILM_ID " +
+                "LEFT JOIN DIRECTORS ON DIRECTORS.ID = FILMS_DIRECTORS.DIRECTOR_ID " +
+                "WHERE FILMS.ID = ?" +
                 "ORDER BY FILMS.ID";
 
         return jdbc.queryForObject(query, filmMapper, id);
