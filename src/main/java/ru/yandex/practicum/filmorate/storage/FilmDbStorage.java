@@ -78,7 +78,7 @@ public class FilmDbStorage implements FilmStorage {
         if (filmAdd.getDirectors() != null) {
             List<Director> filmDirectors = film.getDirectors();
             for (Director director : filmDirectors) {
-                query = "INSERT INTO FILMS_DIRECTORS () " +
+                query = "INSERT INTO FILMS_DIRECTORS (FILM_ID, DIRECTOR_ID) " +
                         "VALUES (?, ?)";
                 try {
                     jdbc.update(query, key, director.getId());
@@ -97,7 +97,7 @@ public class FilmDbStorage implements FilmStorage {
         String queryFilm = "UPDATE FILMS SET ID = ?, TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, " +
                 "DURATION = ?, MPA_RATE = ? WHERE ID = ?";
         String queryGenres = "UPDATE FILMS_GENRE SET GENRE_ID = ? WHERE FILM_ID = ?";
-        String queryDirectors = "UPDATE FILMS_DIRECTORS SET DIRECTOR_ID = ? WHERE FILM_ID = ?";
+        String queryDir = "INSERT INTO FILMS_DIRECTORS (DIRECTOR_ID, FILM_ID) VALUES (?, ?)";
 
         jdbc.update(queryFilm, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getMpa().getId(), film.getId());
@@ -110,7 +110,7 @@ public class FilmDbStorage implements FilmStorage {
         if (film.getDirectors() != null) {
             List<Director> filmDirectors = film.getDirectors();
             for (Director director : filmDirectors) {
-                jdbc.update(queryDirectors, director.getId(), film.getId());
+                jdbc.update(queryDir, director.getId(), film.getId());
             }
 
         }
