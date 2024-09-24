@@ -74,4 +74,6 @@ public interface UserStorage {
      */
     void deleteFriend(Long idUser, Long idFriend) throws NotFoundException;
 
+    void removeUserById(Long userId) throws NotFoundException;
+
 }

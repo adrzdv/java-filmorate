@@ -101,4 +101,9 @@ public class FilmService {
         return filmStorage.getAll();
     }
 
+    public void removeFilmById(Long id) throws BadRequest {
+
+        filmStorage.removeFilmById(id);
+    }
+
 }

@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -152,6 +153,13 @@ public class FilmDbStorage implements FilmStorage {
         String query = "DELETE FROM LIKES WHERE FILM_ID = ? AND USER_ID = ?";
         jdbc.update(query, id, userId);
         return getFilm(id);
+    }
+
+    @Override
+    public void removeFilmById(Long id) throws BadRequest {
+
+        String query = "DELETE FROM films WHERE id = ?";
+        jdbc.update(query, id);
     }
 
     /**

@@ -68,5 +68,7 @@ public interface FilmStorage {
      */
     Film removeLike(Long id, Long userId);
 
+    void removeFilmById(Long id) throws BadRequest;
+
 
 }

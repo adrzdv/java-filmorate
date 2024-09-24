@@ -102,6 +102,12 @@ public class UserController {
         userService.deleteFriend(id, friendId);
     }
 
+    @DeleteMapping(value = "/{userId}")
+    public void removeUserById(@PathVariable Long userId) throws NotFoundException {
+
+        userService.removeUserById(userId);
+    }
+
 
     /**
      * Get all user's friends

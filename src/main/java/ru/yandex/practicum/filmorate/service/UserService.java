@@ -110,4 +110,9 @@ public class UserService {
 
         return userStorage.getAll();
     }
+
+    public void removeUserById(Long userId) throws NotFoundException {
+
+        userStorage.removeUserById(userId);
+    }
 }

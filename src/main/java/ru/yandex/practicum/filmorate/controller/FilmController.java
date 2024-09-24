@@ -121,4 +121,10 @@ public class FilmController {
         return filmService.getMostPopular(count);
     }
 
+    @DeleteMapping(value = "/{filmId}")
+    public void removeFilmById(@PathVariable Long filmId) throws BadRequest {
+
+        filmService.removeFilmById(filmId);
+    }
+
 }
