@@ -15,6 +15,7 @@ import java.util.List;
 public class FilmMapper implements RowMapper<Film> {
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
+
         List<Genre> genreList = new ArrayList<>();
         Film film = Film.builder()
                 .id(rs.getLong("id"))
@@ -23,23 +24,23 @@ public class FilmMapper implements RowMapper<Film> {
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getLong("duration"))
                 .mpa(MpaRating.builder()
-                        .id(rs.getInt("mpa_id")) // Убедитесь, что столбец mpa_id существует в запросе
-                        .name(rs.getString("mpa_rate")) // Убедитесь, что столбец mpa_rate существует в запросе
+                        .id(rs.getInt("mpa_id"))
+                        .name(rs.getString("mpa_rate"))
                         .build())
                 .build();
 
-        // Теперь добавляем жанры в список, если они есть в результате
         do {
-            if (rs.getInt("genre_id") > 0) { // Проверяем, что genre_id больше 0
-                Genre genre = Genre.builder()
-                        .id(rs.getInt("genre_id"))
-                        .name(rs.getString("genre"))
-                        .build();
-                genreList.add(genre);
+            if (rs.getInt("genre_id") == 0) {
+                return film;
             }
-        } while (rs.next());
+            Genre genre = Genre.builder()
+                    .id(rs.getInt("genre_id"))
+                    .name(rs.getString("genre"))
+                    .build();
+            genreList.add(genre);
 
-        film.setGenres(genreList); // Устанавливаем жанры в фильм
+        } while (rs.next());
+        film.setGenres(genreList);
         return film;
     }
 }
