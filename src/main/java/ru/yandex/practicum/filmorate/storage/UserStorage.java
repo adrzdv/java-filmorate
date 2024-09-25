@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -73,5 +74,13 @@ public interface UserStorage {
      * @throws NotFoundException
      */
     void deleteFriend(Long idUser, Long idFriend) throws NotFoundException;
+
+    /**
+     * Delete user by ID
+     *
+     * @param id  user's id
+     * @throws EmptyResultDataAccessException
+     */
+    void deleteUserById(Long id) throws EmptyResultDataAccessException;
 
 }

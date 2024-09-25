@@ -121,4 +121,16 @@ public class FilmController {
         return filmService.getMostPopular(count);
     }
 
+    /**
+     * Remove film by ID
+     *
+     * @param filmId    film's id
+     * @return Film
+     */
+    @DeleteMapping(value = {"/{filmId}"})
+    public void deleteFilmById(@PathVariable Long filmId) {
+
+        filmService.deleteFilmById(filmId);
+    }
+
 }

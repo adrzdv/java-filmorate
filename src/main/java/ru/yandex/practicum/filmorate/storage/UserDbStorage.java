@@ -117,6 +117,13 @@ public class UserDbStorage implements UserStorage {
 
     }
 
+    @Override
+    public void deleteUserById(Long id) throws EmptyResultDataAccessException {
+
+        String query = "DELETE FROM USERS WHERE ID = ?";
+        jdbc.update(query, id);
+    }
+
     /**
      * Add new user in database
      *

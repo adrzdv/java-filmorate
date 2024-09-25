@@ -101,4 +101,9 @@ public class FilmService {
         return filmStorage.getAll();
     }
 
+    public void deleteFilmById(Long id) {
+
+        filmStorage.deleteFilmById(id);
+    }
+
 }
