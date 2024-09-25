@@ -39,19 +39,12 @@ public class FilmMapper implements RowMapper<Film> {
                     .name(rs.getString("genre"))
                     .build();
             genreList.add(genre);
-            /*if (!genreList.contains(genre)) {
-                genreList.add(genre);
-            }*/
 
             Director director = Director.builder()
                     .id(rs.getInt("director_id"))
                     .name(rs.getString("director_name"))
                     .build();
             directorList.add(director);
-                    
-            /*if (!directorList.contains(director)) {*/
-            /*    directorList.add(director);*/
-            /*}*/
 
         } while (rs.next());
         film.setGenres(genreList);

@@ -28,9 +28,7 @@ public class FilmResultExtractor implements ResultSetExtractor<List<Film>> {
                         .id(rs.getInt("director_id"))
                         .name(rs.getString("director_name"))
                         .build();
-                if (filmList.get(rs.getLong("id")).getDirectors() != null) {
-                    filmList.get(rs.getLong("id")).getDirectors().add(director);
-                }
+                filmList.get(rs.getLong("id")).getDirectors().add(director);
             } else {
                 Genre genre = Genre.builder()
                         .id(rs.getInt("genre_id"))
@@ -51,13 +49,11 @@ public class FilmResultExtractor implements ResultSetExtractor<List<Film>> {
                                 .name(rs.getString("mpa_rate"))
                                 .build())
                         .genres(new ArrayList<>())
+                        .directors(new ArrayList<>())
                         .build();
                 filmList.put(film.getId(), film);
-                if (!(filmList.get(film.getId()).getDirectors() == null ||
-                        filmList.get(film.getId()).getGenres() == null)) {
-                    filmList.get(film.getId()).getGenres().add(genre);
-                    filmList.get(film.getId()).getDirectors().add(director);
-                }
+                filmList.get(film.getId()).getGenres().add(genre);
+                filmList.get(film.getId()).getDirectors().add(director);
             }
         }
 
