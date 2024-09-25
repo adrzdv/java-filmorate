@@ -101,4 +101,9 @@ public class FilmService {
         return filmStorage.getAll();
     }
 
+
+    public List<Film> getByDirector(int id, String param) {
+        return filmStorage.getByDirector(id, param);
+    }
+
 }

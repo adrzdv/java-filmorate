@@ -121,4 +121,17 @@ public class FilmController {
         return filmService.getMostPopular(count);
     }
 
+
+    /**
+     * @param id
+     * @param sortBy parameter for determining sorting type: year - for sorting by release date,
+     *               likes - sorting by likes count
+     * @return
+     */
+    @GetMapping(value = "/director/{id}")
+    public List<Film> getByDirector(@PathVariable int id,
+                                    @RequestParam String sortBy) {
+        return filmService.getByDirector(id, sortBy);
+    }
+
 }

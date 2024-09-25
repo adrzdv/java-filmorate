@@ -184,6 +184,41 @@ public class FilmDbStorage implements FilmStorage {
         return getFilm(id);
     }
 
+    @Override
+    public List<Film> getByDirector(int id, String param) {
+
+        if (param.equals("year")) {
+            String query = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION, " +
+                    "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE, " +
+                    "DIRECTORS.ID AS DIRECTOR_ID, DIRECTORS.NAME AS DIRECTOR_NAME FROM FILMS " +
+                    "LEFT JOIN MPA ON FILMS.MPA_RATE = MPA.ID " +
+                    "LEFT JOIN FILMS_GENRE ON FILMS.ID = FILMS_GENRE.FILM_ID " +
+                    "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID " +
+                    "LEFT JOIN FILMS_DIRECTORS ON FILMS_DIRECTORS.FILM_ID = FILMS.ID " +
+                    "LEFT JOIN DIRECTORS ON DIRECTORS.ID = FILMS_DIRECTORS.DIRECTOR_ID " +
+                    "WHERE DIRECTORS.ID = ? " +
+                    "ORDER BY FILMS.RELEASE_DATE";
+            return jdbc.query(query, filmResultExtractor, id);
+
+        } else if (param.equals("likes")) {
+            String query = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION,\n" +
+                    "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE,\n" +
+                    "DIRECTORS.ID AS DIRECTOR_ID, DIRECTORS.NAME AS DIRECTOR_NAME, like_count.like_count FROM FILMS\n" +
+                    "LEFT JOIN MPA ON FILMS.MPA_RATE = MPA.ID\n" +
+                    "LEFT JOIN FILMS_GENRE ON FILMS.ID = FILMS_GENRE.FILM_ID\n" +
+                    "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID\n" +
+                    "LEFT JOIN FILMS_DIRECTORS ON FILMS_DIRECTORS.FILM_ID = FILMS.ID\n" +
+                    "LEFT JOIN DIRECTORS ON DIRECTORS.ID = FILMS_DIRECTORS.DIRECTOR_ID\n" +
+                    "LEFT JOIN (SELECT LIKES.FILM_ID AS id_film, COUNT(LIKES.USER_ID) AS like_count FROM LIKES\n" +
+                    "GROUP BY FILM_ID) AS like_count ON like_count.id_film = FILMS.ID\n" +
+                    "WHERE DIRECTORS.ID = ?\n" +
+                    "ORDER BY like_count.like_count DESC";
+            return jdbc.query(query, filmResultExtractor, id);
+        }
+
+        return null;
+    }
+
     /**
      * Remove duplicate film genres
      *
