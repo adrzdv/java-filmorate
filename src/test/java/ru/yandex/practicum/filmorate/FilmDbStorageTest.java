@@ -7,7 +7,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.ComponentScan;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
@@ -25,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FilmDbStorageTest {
     private final FilmDbStorage filmStorage;
     private final UserDbStorage userStorage;
+    private final DirectorStorage directorStorage;
 
     @Test
     public void addFilm() throws BadRequest {
@@ -66,7 +69,7 @@ class FilmDbStorageTest {
     }
 
     @Test
-    public void updateFilm() throws BadRequest {
+    public void updateFilm() throws BadRequest, NotFoundException {
 
         Genre genre = Genre.builder()
                 .id(1)
@@ -90,11 +93,13 @@ class FilmDbStorageTest {
                         .name("G")
                         .build())
                 .genres(genreList)
-                .directors(directorList)
                 .build();
 
+        directorStorage.add(director);
         Film filmFromDb = filmStorage.addNew(film);
         filmFromDb.setDescription("Changed description");
+        filmFromDb.setDirectors(directorList);
+
 
         Film assertFilm = filmStorage.update(filmFromDb);
         Optional<Film> filmOptional = Optional.ofNullable(filmStorage.getFilm(assertFilm.getId()));

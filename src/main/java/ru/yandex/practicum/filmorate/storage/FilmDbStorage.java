@@ -106,6 +106,10 @@ public class FilmDbStorage implements FilmStorage {
                 "DURATION = ?, MPA_RATE = ? WHERE ID = ?";
         String queryGenres = "UPDATE FILMS_GENRE SET GENRE_ID = ? WHERE FILM_ID = ?";
         String queryDir = "UPDATE FILMS_DIRECTORS SET DIRECTOR_ID = ? WHERE FILM_ID = ?";
+        String queryDirIfNotExist = "INSERT INTO FILMS_DIRECTORS (FILM_ID, DIRECTOR_ID) VALUES (?, ?)";
+
+        List<Director> dirList = getFilm(film.getId()).getDirectors();
+        Director filmDirector = dirList.get(0);
 
         jdbc.update(queryFilm, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getMpa().getId(), film.getId());
@@ -115,12 +119,16 @@ public class FilmDbStorage implements FilmStorage {
                 jdbc.update(queryGenres, genre.getId(), film.getId());
             }
         }
-        if (film.getDirectors() != null) {
+        if (film.getDirectors() != null && filmDirector.getId() != 0) {
             List<Director> filmDirectors = film.getDirectors();
             for (Director director : filmDirectors) {
                 jdbc.update(queryDir, director.getId(), film.getId());
             }
-
+        } else if (film.getDirectors() != null) {
+            List<Director> filmDirectors = film.getDirectors();
+            for (Director director : filmDirectors) {
+                jdbc.update(queryDirIfNotExist, film.getId(), director.getId());
+            }
         }
 
         return getFilm(film.getId());
