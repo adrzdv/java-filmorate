@@ -102,6 +102,7 @@ public class FilmService {
         return filmStorage.getAll();
     }
 
+
     /**
      * Returns a list of common films
      *
@@ -112,4 +113,10 @@ public class FilmService {
     public List<Film> getCommonFilms(Long userId, Long friendId) {
         return filmStorage.getCommonFilms(userId, friendId);
     }
+
+    public void deleteFilmById(Long id) {
+
+        filmStorage.deleteFilmById(id);
+    }
+
 }
