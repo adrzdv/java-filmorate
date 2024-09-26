@@ -197,6 +197,14 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         return null;
+}
+
+  @Override
+    public void deleteFilmById(Long id) throws EmptyResultDataAccessException {
+
+        String query = "DELETE FROM FILMS WHERE ID = ?";
+        jdbc.update(query, id);
+
     }
 
     /**

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage;
 
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -76,5 +77,12 @@ public interface FilmStorage {
      * @return List of film
      */
     List<Film> getByDirector(int id, String param);
+
+     * Remove film by ID
+     *
+     * @param id          film's id
+     * @throws EmptyResultDataAccessException
+     */
+    void deleteFilmById(Long id) throws EmptyResultDataAccessException;
 
 }

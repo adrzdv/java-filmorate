@@ -122,6 +122,7 @@ public class FilmController {
     }
 
 
+
     /**
      * @param id
      * @param sortBy parameter for determining sorting type: year - for sorting by release date,
@@ -132,6 +133,18 @@ public class FilmController {
     public List<Film> getByDirector(@PathVariable int id,
                                     @RequestParam String sortBy) {
         return filmService.getByDirector(id, sortBy);
+}
+
+    /**
+     * Remove film by ID
+     *
+     * @param filmId    film's id
+     */
+    @DeleteMapping(value = {"/{filmId}"})
+    public void deleteFilmById(@PathVariable Long filmId) {
+
+        filmService.deleteFilmById(filmId);
+
     }
 
 }
