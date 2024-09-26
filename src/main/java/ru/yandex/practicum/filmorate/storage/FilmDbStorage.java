@@ -225,6 +225,6 @@ public class FilmDbStorage implements FilmStorage {
                 "JOIN LIKES l2 ON f.id = l2.film_id AND l2.user_id = ?";
 
         // Используем FilmResultExtractor для обработки результата запроса
-        return jdbc.query(query, new FilmResultExtractor(), userId, friendId);
+        return jdbc.query(query, filmResultExtractor, userId, friendId);
     }
 }

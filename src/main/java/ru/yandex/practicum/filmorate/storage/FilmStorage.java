@@ -69,5 +69,12 @@ public interface FilmStorage {
      */
     Film removeLike(Long id, Long userId);
 
+    /**
+     * Returns a list of common films
+     *
+     * @param userId   user's id
+     * @param friendId user's id
+     * @return List of film
+     */
     List<Film> getCommonFilms(Long userId, Long friendId);
 }

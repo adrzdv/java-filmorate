@@ -128,10 +128,6 @@ public class FilmController {
                                                      @RequestParam Long friendId) throws BadRequest {
         log.info("Запрос на получение общих фильмов для userId: {}, friendId: {}", userId, friendId);
 
-        // Проверка на null
-        if (userId == null || friendId == null) {
-            throw new BadRequest("userId и friendId не могут быть null");
-        }
 
         List<Film> commonFilms = filmService.getCommonFilms(userId, friendId);
 

@@ -102,6 +102,13 @@ public class FilmService {
         return filmStorage.getAll();
     }
 
+    /**
+     * Returns a list of common films
+     *
+     * @param userId   user's id
+     * @param friendId user's id
+     * @return List of film
+     */
     public List<Film> getCommonFilms(Long userId, Long friendId) {
         return filmStorage.getCommonFilms(userId, friendId);
     }
