@@ -78,7 +78,7 @@ public interface FilmStorage {
      */
     List<Film> getByDirector(int id, String param);
 
-     * Remove film by ID
+     /** Remove film by ID
      *
      * @param id          film's id
      * @throws EmptyResultDataAccessException
