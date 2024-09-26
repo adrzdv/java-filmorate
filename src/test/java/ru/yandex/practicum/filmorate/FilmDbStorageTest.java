@@ -112,15 +112,16 @@ class FilmDbStorageTest {
 
         Genre genre = Genre.builder()
                 .id(1)
-                .name("Action")
+                .name("Комедия")
                 .build();
         List<Genre> genreList = new ArrayList<>();
         genreList.add(genre);
+
         Film film = Film.builder()
                 .name("Some film")
-                .description("Descriptiom")
+                .description("Description")
                 .duration(120L)
-                .releaseDate(LocalDate.of(2000, 01, 01))
+                .releaseDate(LocalDate.of(2000, 1, 1))
                 .mpa(MpaRating.builder()
                         .id(1)
                         .name("G")
@@ -134,15 +135,15 @@ class FilmDbStorageTest {
                 .name("Some User")
                 .login("userLogin")
                 .email("aaa@gmail.com")
-                .birthday(LocalDate.of(1992, 01, 01))
+                .birthday(LocalDate.of(1992, 1, 1))
                 .build();
 
         User userFromDb = userStorage.addNew(user);
 
         filmStorage.addLike(filmFromDb.getId(), userFromDb.getId());
-        List<Film> ratedFilms = filmStorage.getMostRated(1);
-        assertThat(ratedFilms.getFirst()).isEqualTo(filmFromDb);
 
+        List<Film> ratedFilms = filmStorage.getMostRated(1, null, null);
+
+        assertThat(ratedFilms.get(0)).isEqualTo(filmFromDb);
     }
-
 }

@@ -156,19 +156,35 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getMostRated(int count) {
-
-        String query = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION, " +
+    public List<Film> getMostRated(int count, Integer genreId, Integer year) {
+        StringBuilder query = new StringBuilder("SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION, " +
                 "FILMS.MPA_RATE AS MPA_ID, MPA.NAME AS MPA_RATE, COUNT(LIKES.USER_ID) AS LIKES " +
                 "FROM FILMS " +
                 "LEFT JOIN MPA ON MPA.ID = FILMS.MPA_RATE " +
                 "LEFT JOIN FILMS_GENRE ON FILMS_GENRE.FILM_ID = FILMS.ID " +
-                "LEFT JOIN LIKES ON FILMS.ID = LIKES.FILM_ID " +
-                "GROUP BY FILMS.ID " +
-                "ORDER BY likes DESC LIMIT ?";
+                "LEFT JOIN LIKES ON FILMS.ID = LIKES.FILM_ID ");
 
-        return jdbc.query(query, filmRatedMapper, count);
+        // Добавление фильтрации по жанру, если указан genreId
+        if (genreId != null) {
+            query.append("WHERE FILMS_GENRE.GENRE_ID = ").append(genreId).append(" ");
+        }
+
+        // Добавление фильтрации по году, если указан year
+        if (year != null) {
+            if (genreId != null) {
+                query.append("AND ");
+            } else {
+                query.append("WHERE ");
+            }
+            query.append("YEAR(FILMS.RELEASE_DATE) = ").append(year).append(" ");
+        }
+
+        query.append("GROUP BY FILMS.ID " +
+                "ORDER BY LIKES DESC LIMIT ?");
+
+        return jdbc.query(query.toString(), filmRatedMapper, count);
     }
+
 
     @Override
     public Film removeLike(Long id, Long userId) {

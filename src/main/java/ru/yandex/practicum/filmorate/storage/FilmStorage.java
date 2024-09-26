@@ -53,12 +53,15 @@ public interface FilmStorage {
 
 
     /**
-     * Returns list of the most rated films
+     * Returns list of the most rated films by genre and year
      *
-     * @param count size of returning list
+     * @param count   size of returning list
+     * @param genreId genre's id
+     * @param year    year of film's release_date
      * @return List of film
      */
-    List<Film> getMostRated(int count);
+
+    List<Film> getMostRated(int count, Integer genreId, Integer year);
 
     /**
      * Remove a current user's like
@@ -66,7 +69,6 @@ public interface FilmStorage {
      * @param id     film's id
      * @param userId user's id
      * @return Film
-     *
      */
     Film removeLike(Long id, Long userId);
 
@@ -79,8 +81,7 @@ public interface FilmStorage {
      */
     List<Film> getByDirector(int id, String param);
 
-     /** Remove film by ID
-
+    /**
      * Returns a list of common films
      *
      * @param userId   user's id
@@ -89,11 +90,10 @@ public interface FilmStorage {
      */
     List<Film> getCommonFilms(Long userId, Long friendId);
 
-     /**
+    /**
      * Remove film by ID
-
      *
-     * @param id          film's id
+     * @param id film's id
      * @throws EmptyResultDataAccessException
      */
     void deleteFilmById(Long id) throws EmptyResultDataAccessException;
