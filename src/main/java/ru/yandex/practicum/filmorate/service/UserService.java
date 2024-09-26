@@ -110,4 +110,9 @@ public class UserService {
 
         return userStorage.getAll();
     }
+
+    public void deleteUserById(Long id) {
+
+        userStorage.deleteUserById(id);
+    }
 }

@@ -130,4 +130,14 @@ public class UserController {
         return userService.getCommon(id, otherId);
     }
 
+    /**
+     * Delete user by ID
+     *
+     * @param userId       user's id
+     */
+    @DeleteMapping(value = "/{userId}")
+    public void deleteUserById(@PathVariable Long userId) {
+
+        userService.deleteUserById(userId);
+    }
 }
