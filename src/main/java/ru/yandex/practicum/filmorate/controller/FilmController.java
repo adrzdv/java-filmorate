@@ -11,7 +11,7 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/films")
@@ -120,6 +120,20 @@ public class FilmController {
     public List<Film> getMostPopular(@RequestParam(defaultValue = "10") int count) {
 
         return filmService.getMostPopular(count);
+    }
+
+    /**
+     * Search by film title or director
+     *
+     * @param query query for search
+     * @param by    parameters for search: can be director,
+     * @return List of films
+     */
+    @GetMapping(value = "/search")
+    public List<Film> search(@RequestParam String query,
+                             @RequestParam String by) {
+
+        return filmService.search(query, by);
     }
 
 
