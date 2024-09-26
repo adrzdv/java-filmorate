@@ -22,7 +22,7 @@ public class FilmService {
      * @param userId user's id
      * @return Film
      */
-    public Film addLike(Long id, Long userId) {
+    public Film addLike(Long id, Long userId) throws NotFoundException {
 
         return filmStorage.addLike(id, userId);
     }
@@ -99,6 +99,18 @@ public class FilmService {
     public List<Film> getAll() {
 
         return filmStorage.getAll();
+    }
+
+    /**
+     * Search by film title or director
+     *
+     * @param query  query for search
+     * @param params parameters for search
+     * @return List of films
+     */
+    public List<Film> search(String query, String params) {
+
+        return filmStorage.search(query, params);
     }
 
 }

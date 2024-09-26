@@ -184,6 +184,75 @@ public class FilmDbStorage implements FilmStorage {
         return getFilm(id);
     }
 
+    @Override
+    public List<Film> search(String searchQuery, String params) {
+        String[] searchParams = params.split(",");
+        String resp = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, \n" +
+                "FILMS.DURATION, MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, \n" +
+                "GENRE.NAME AS GENRE, \n" +
+                "DIRECTORS.ID AS DIRECTOR_ID, DIRECTORS.NAME AS DIRECTOR_NAME FROM FILMS\n" +
+                "LEFT JOIN MPA ON FILMS.MPA_RATE = MPA.ID\n" +
+                "LEFT JOIN FILMS_GENRE ON FILMS.ID = FILMS_GENRE.FILM_ID\n" +
+                "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID\n" +
+                "LEFT JOIN FILMS_DIRECTORS ON FILMS_DIRECTORS.FILM_ID = FILMS.ID\n" +
+                "LEFT JOIN DIRECTORS ON DIRECTORS.ID = FILMS_DIRECTORS.DIRECTOR_ID\n" +
+                "LEFT JOIN (SELECT LIKES.FILM_ID AS id_film, COUNT(LIKES.USER_ID) AS like_count FROM LIKES\n" +
+                "GROUP BY FILM_ID) AS like_count ON like_count.id_film = FILMS.ID\n";
+        List<Film> result = new ArrayList<>();
+
+        if (searchParams.length == 1) {
+            if (searchParams[0].equals("director")) {
+                result = searchByDirector(resp, searchQuery);
+            } else if (searchParams[0].equals("title")) {
+                result = searchByTitle(resp, searchQuery);
+            }
+        } else if (searchParams.length == 2) {
+            result = searchByBothParams(resp, searchQuery);
+        }
+
+        return result;
+    }
+
+    /**
+     * Search films by title
+     *
+     * @param sqlQuery    SQL query string
+     * @param searchQuery search string
+     * @return List of films
+     */
+    private List<Film> searchByTitle(String sqlQuery, String searchQuery) {
+        String query = sqlQuery + "WHERE FILMS.TITLE LIKE '%" + searchQuery + "%'\n" +
+                "ORDER BY like_count.like_count DESC";
+        return jdbc.query(query, filmResultExtractor);
+    }
+
+    /**
+     * Search by director
+     *
+     * @param sqlQuery    SQL query string
+     * @param searchQuery search string
+     * @return List of films
+     */
+    private List<Film> searchByDirector(String sqlQuery, String searchQuery) {
+        String query = sqlQuery + "WHERE DIRECTORS.NAME LIKE '%" + searchQuery + "%'\n" +
+                "ORDER BY like_count.like_count DESC";
+        return jdbc.query(query, filmResultExtractor);
+    }
+
+    /**
+     * Search by both parameters (title, director)
+     *
+     * @param sqlQuery    SQL query string
+     * @param searchQuery search string
+     * @return List of films
+     */
+    private List<Film> searchByBothParams(String sqlQuery, String searchQuery) {
+        String query = sqlQuery + "WHERE FILMS.TITLE LIKE '%" + searchQuery + "%' AND DIRECTORS.NAME LIKE '%" +
+                searchQuery + "%'\n" +
+                "ORDER BY like_count.like_count DESC";
+        return null;
+    }
+
     /**
      * Remove duplicate film genres
      *

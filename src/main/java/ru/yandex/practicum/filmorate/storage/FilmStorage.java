@@ -44,8 +44,8 @@ public interface FilmStorage {
     /**
      * Add a like by current user to current film
      *
-     * @param id          film's id
-     * @param userId      user's id
+     * @param id     film's id
+     * @param userId user's id
      * @return Film
      */
     Film addLike(Long id, Long userId);
@@ -62,11 +62,19 @@ public interface FilmStorage {
     /**
      * Remove a current user's like
      *
-     * @param id          film's id
-     * @param userId      user's id
+     * @param id     film's id
+     * @param userId user's id
      * @return Film
      */
     Film removeLike(Long id, Long userId);
 
+    /**
+     * Search by film title or director
+     *
+     * @param query  query for search
+     * @param params parameters for search
+     * @return List of films
+     */
+    List<Film> search(String query, String params);
 
 }

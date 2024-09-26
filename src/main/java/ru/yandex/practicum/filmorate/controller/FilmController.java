@@ -121,4 +121,18 @@ public class FilmController {
         return filmService.getMostPopular(count);
     }
 
+    /**
+     * Search by film title or director
+     *
+     * @param query query for search
+     * @param by    parameters for search: can be director,
+     * @return List of films
+     */
+    @GetMapping(value = "/search")
+    public List<Film> search(@RequestParam String query,
+                             @RequestParam String by) {
+
+        return filmService.search(query, by);
+    }
+
 }
