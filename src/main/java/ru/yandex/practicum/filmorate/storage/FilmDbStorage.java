@@ -215,4 +215,23 @@ public class FilmDbStorage implements FilmStorage {
 
         return newFilm;
     }
+
+    @Override
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        String query = "SELECT f.id, f.title, f.description, f.release_date, f.duration, " +
+                "mpa.id AS mpa_id, mpa.name AS mpa_rate, " +
+                "genre.id AS genre_id, genre.name AS genre, " +
+                "director.id AS director_id, director.name AS director_name " +
+                "FROM FILMS f " +
+                "LEFT JOIN MPA mpa ON f.mpa_rate = mpa.id " +
+                "LEFT JOIN FILMS_GENRE fg ON f.id = fg.film_id " +
+                "LEFT JOIN GENRE genre ON fg.genre_id = genre.id " +
+                "LEFT JOIN FILMS_DIRECTORS fd ON f.id = fd.film_id " +
+                "LEFT JOIN DIRECTORS director ON fd.director_id = director.id " +
+                "JOIN LIKES l1 ON f.id = l1.film_id AND l1.user_id = ? " +
+                "JOIN LIKES l2 ON f.id = l2.film_id AND l2.user_id = ?";
+
+        // Используем FilmResultExtractor для обработки результата запроса
+        return jdbc.query(query, filmResultExtractor, userId, friendId);
+    }
 }

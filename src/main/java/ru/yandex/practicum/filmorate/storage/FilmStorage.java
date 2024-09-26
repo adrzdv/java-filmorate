@@ -45,8 +45,8 @@ public interface FilmStorage {
     /**
      * Add a like by current user to current film
      *
-     * @param id          film's id
-     * @param userId      user's id
+     * @param id     film's id
+     * @param userId user's id
      * @return Film
      */
     Film addLike(Long id, Long userId);
@@ -63,18 +63,29 @@ public interface FilmStorage {
     /**
      * Remove a current user's like
      *
-     * @param id          film's id
-     * @param userId      user's id
+     * @param id     film's id
+     * @param userId user's id
      * @return Film
+     *
      */
     Film removeLike(Long id, Long userId);
 
     /**
+     * Returns a list of common films
+     *
+     * @param userId   user's id
+     * @param friendId user's id
+     * @return List of film
+     */
+    List<Film> getCommonFilms(Long userId, Long friendId);
+
+     /**
      * Remove film by ID
      *
      * @param id          film's id
      * @throws EmptyResultDataAccessException
      */
     void deleteFilmById(Long id) throws EmptyResultDataAccessException;
+
 
 }
