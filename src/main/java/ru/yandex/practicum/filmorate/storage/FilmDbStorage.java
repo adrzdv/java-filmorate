@@ -105,7 +105,7 @@ public class FilmDbStorage implements FilmStorage {
         String queryFilm = "UPDATE FILMS SET ID = ?, TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, " +
                 "DURATION = ?, MPA_RATE = ? WHERE ID = ?";
         String queryGenres = "UPDATE FILMS_GENRE SET GENRE_ID = ? WHERE FILM_ID = ?";
-        String queryDir = "INSERT INTO FILMS_DIRECTORS (DIRECTOR_ID, FILM_ID) VALUES (?, ?)";
+        String queryDir = "UPDATE FILMS_DIRECTORS SET DIRECTOR_ID = ? WHERE FILM_ID = ?";
 
         jdbc.update(queryFilm, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getMpa().getId(), film.getId());
@@ -288,10 +288,10 @@ public class FilmDbStorage implements FilmStorage {
      * @return List of films
      */
     private List<Film> searchByBothParams(String sqlQuery, String searchQuery) {
-        String query = sqlQuery + "WHERE FILMS.TITLE LIKE '%" + searchQuery + "%' AND DIRECTORS.NAME LIKE '%" +
-                searchQuery + "%'\n" +
+        String query = sqlQuery + "WHERE (FILMS.TITLE LIKE '%" + searchQuery + "%' OR DIRECTORS.NAME LIKE '%" +
+                searchQuery + "%')\n" +
                 "ORDER BY like_count.like_count DESC";
-        return null;
+        return jdbc.query(query, filmResultExtractor);
     }
 
     /**
