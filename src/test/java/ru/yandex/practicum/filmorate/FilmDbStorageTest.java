@@ -7,10 +7,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.ComponentScan;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MpaRating;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
@@ -75,8 +72,14 @@ class FilmDbStorageTest {
                 .id(1)
                 .name("Action")
                 .build();
+        Director director = Director.builder()
+                .id(1)
+                .name("New director")
+                .build();
         List<Genre> genreList = new ArrayList<>();
+        List<Director> directorList = new ArrayList<>();
         genreList.add(genre);
+        directorList.add(director);
         Film film = Film.builder()
                 .name("Some film")
                 .description("Descriptiom")
@@ -87,6 +90,7 @@ class FilmDbStorageTest {
                         .name("G")
                         .build())
                 .genres(genreList)
+                .directors(directorList)
                 .build();
 
         Film filmFromDb = filmStorage.addNew(film);

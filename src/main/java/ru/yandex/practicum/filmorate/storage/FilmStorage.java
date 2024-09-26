@@ -71,6 +71,16 @@ public interface FilmStorage {
     Film removeLike(Long id, Long userId);
 
     /**
+     * Get film by director
+     *
+     * @param id    identification number of film director
+     * @param param parameter for sorting
+     * @return List of film
+     */
+    List<Film> getByDirector(int id, String param);
+
+     /** Remove film by ID
+
      * Returns a list of common films
      *
      * @param userId   user's id
@@ -81,6 +91,7 @@ public interface FilmStorage {
 
      /**
      * Remove film by ID
+
      *
      * @param id          film's id
      * @throws EmptyResultDataAccessException

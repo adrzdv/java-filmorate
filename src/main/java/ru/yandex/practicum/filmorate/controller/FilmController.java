@@ -123,6 +123,20 @@ public class FilmController {
     }
 
 
+
+
+    /**
+     * @param id
+     * @param sortBy parameter for determining sorting type: year - for sorting by release date,
+     *               likes - sorting by likes count
+     * @return
+     */
+    @GetMapping(value = "/director/{id}")
+    public List<Film> getByDirector(@PathVariable int id,
+                                    @RequestParam String sortBy) {
+        return filmService.getByDirector(id, sortBy);
+}
+
     @GetMapping("/common")
     public ResponseEntity<List<Film>> getCommonFilms(@RequestParam Long userId,
                                                      @RequestParam Long friendId) throws BadRequest {
@@ -135,6 +149,7 @@ public class FilmController {
     }
 
 
+
     /**
      * Remove film by ID
      *
@@ -144,6 +159,7 @@ public class FilmController {
     public void deleteFilmById(@PathVariable Long filmId) {
 
         filmService.deleteFilmById(filmId);
+
     }
 
 }

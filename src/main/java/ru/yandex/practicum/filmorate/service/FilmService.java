@@ -103,6 +103,12 @@ public class FilmService {
     }
 
 
+    public List<Film> getByDirector(int id, String param) {
+
+        return filmStorage.getByDirector(id, param);
+    }
+
+
     /**
      * Returns a list of common films
      *
@@ -112,11 +118,13 @@ public class FilmService {
      */
     public List<Film> getCommonFilms(Long userId, Long friendId) {
         return filmStorage.getCommonFilms(userId, friendId);
+
     }
 
     public void deleteFilmById(Long id) {
 
         filmStorage.deleteFilmById(id);
+
     }
 
 }
