@@ -123,8 +123,6 @@ public class FilmController {
     }
 
 
-
-
     /**
      * @param id
      * @param sortBy parameter for determining sorting type: year - for sorting by release date,
@@ -135,13 +133,12 @@ public class FilmController {
     public List<Film> getByDirector(@PathVariable int id,
                                     @RequestParam String sortBy) {
         return filmService.getByDirector(id, sortBy);
-}
+    }
 
     @GetMapping("/common")
     public ResponseEntity<List<Film>> getCommonFilms(@RequestParam Long userId,
                                                      @RequestParam Long friendId) throws BadRequest {
         log.info("Запрос на получение общих фильмов для userId: {}, friendId: {}", userId, friendId);
-
 
         List<Film> commonFilms = filmService.getCommonFilms(userId, friendId);
 
@@ -149,11 +146,10 @@ public class FilmController {
     }
 
 
-
     /**
      * Remove film by ID
      *
-     * @param filmId    film's id
+     * @param filmId film's id
      */
     @DeleteMapping(value = {"/{filmId}"})
     public void deleteFilmById(@PathVariable Long filmId) {
