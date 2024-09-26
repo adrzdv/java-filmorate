@@ -15,6 +15,7 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
 
+
     /**
      * Add a like to film
      *
@@ -101,9 +102,23 @@ public class FilmService {
         return filmStorage.getAll();
     }
 
+
     public List<Film> getByDirector(int id, String param) {
 
         return filmStorage.getByDirector(id, param);
+    }
+
+
+    /**
+     * Returns a list of common films
+     *
+     * @param userId   user's id
+     * @param friendId user's id
+     * @return List of film
+     */
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
+
     }
 
     public void deleteFilmById(Long id) {

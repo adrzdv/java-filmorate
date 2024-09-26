@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.exceptions.ConditionsException;
@@ -10,7 +11,7 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/films")
@@ -123,6 +124,7 @@ public class FilmController {
 
 
 
+
     /**
      * @param id
      * @param sortBy parameter for determining sorting type: year - for sorting by release date,
@@ -134,6 +136,19 @@ public class FilmController {
                                     @RequestParam String sortBy) {
         return filmService.getByDirector(id, sortBy);
 }
+
+    @GetMapping("/common")
+    public ResponseEntity<List<Film>> getCommonFilms(@RequestParam Long userId,
+                                                     @RequestParam Long friendId) throws BadRequest {
+        log.info("Запрос на получение общих фильмов для userId: {}, friendId: {}", userId, friendId);
+
+
+        List<Film> commonFilms = filmService.getCommonFilms(userId, friendId);
+
+        return ResponseEntity.ok(commonFilms);
+    }
+
+
 
     /**
      * Remove film by ID
