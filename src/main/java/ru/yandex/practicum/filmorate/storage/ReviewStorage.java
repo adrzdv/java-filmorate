@@ -167,7 +167,7 @@ public class ReviewStorage implements BaseStorage {
 
         int res = jdbc.update(query, reviewId);
 
-        if (res!=1) {
+        if (res != 1) {
             throw new NotFoundException("Review not found ");
         }
     }
@@ -184,7 +184,7 @@ public class ReviewStorage implements BaseStorage {
 
         int res = jdbc.update(query, reviewId);
 
-        if (res!=1) {
+        if (res != 1) {
             throw new NotFoundException("Review not found ");
         }
     }
@@ -201,7 +201,7 @@ public class ReviewStorage implements BaseStorage {
 
         int res = jdbc.update(query, reviewId);
 
-        if (res!=1) {
+        if (res != 1) {
             throw new NotFoundException("Review not found ");
         }
     }
@@ -218,7 +218,7 @@ public class ReviewStorage implements BaseStorage {
 
         int res = jdbc.update(query, reviewId);
 
-        if (res!=1) {
+        if (res != 1) {
             throw new NotFoundException("Review not found ");
         }
     }
