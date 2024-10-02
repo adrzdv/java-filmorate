@@ -55,15 +55,17 @@ public class FilmService {
     }
 
     /**
-     * Returns list of the most rated films
+     * Returns list of the most rated films by genre and year
      *
-     * @param count size of returning list
+     * @param count   size of returning list
+     * @param genreId genre's id
+     * @param year    year of film's release_date
      * @return List of film
      */
 
-    public List<Film> getMostPopular(int count) {
+    public List<Film> getMostPopular(int count, Integer genreId, Integer year) {
 
-        return filmStorage.getMostRated(count);
+        return filmStorage.getMostRated(count, genreId, year);
 
     }
 

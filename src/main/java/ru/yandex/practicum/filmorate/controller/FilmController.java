@@ -110,16 +110,21 @@ public class FilmController {
     }
 
     /**
-     * Get first the most popular list of film.
+     * Get first the most popular list of film by genre and year
      * Default value for return = 10
      *
-     * @param count number of films for present
+     * @param count   number of films for present
+     * @param genreId genre's id
+     * @param year    year of film's release_date
      * @return List of films
      */
-    @GetMapping(value = "popular")
-    public List<Film> getMostPopular(@RequestParam(defaultValue = "10") int count) {
 
-        return filmService.getMostPopular(count);
+    @GetMapping(value = "popular")
+    public List<Film> getMostPopular(@RequestParam(defaultValue = "10") int count,
+                                     @RequestParam(required = false) Integer genreId,
+                                     @RequestParam(required = false) Integer year) {
+
+        return filmService.getMostPopular(count, genreId, year);
     }
 
     /**
