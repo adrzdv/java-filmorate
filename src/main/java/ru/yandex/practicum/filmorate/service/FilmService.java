@@ -141,4 +141,15 @@ public class FilmService {
         return filmStorage.search(query, params);
     }
 
+    /**
+     * Get recommendations on movies to watch for the user
+     *
+     * @param id    user`s id
+     * @return List of film
+     * @throws NotFoundException
+     */
+    public List<Film> getRecommendations(Long id) {
+        return filmStorage.getRecommendations(id);
+    }
+
 }

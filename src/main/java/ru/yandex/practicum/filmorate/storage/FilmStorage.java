@@ -81,7 +81,7 @@ public interface FilmStorage {
      */
     List<Film> getByDirector(int id, String param);
 
-    /**
+     /**
      * Returns a list of common films
      *
      * @param userId   user's id
@@ -91,6 +91,15 @@ public interface FilmStorage {
     List<Film> getCommonFilms(Long userId, Long friendId);
 
     /**
+     * Get movie recommendations to watch
+     *
+     * @param id    user`s id
+     * @return List of film
+     * @throws NotFoundException
+     */
+    List<Film> getRecommendations(Long id);
+
+     /**
      * Remove film by ID
      *
      * @param id film's id

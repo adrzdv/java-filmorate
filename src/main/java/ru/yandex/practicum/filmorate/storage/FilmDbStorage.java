@@ -9,14 +9,18 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
-import ru.yandex.practicum.filmorate.mapper.*;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.mapper.FilmRatedMapper;
+import ru.yandex.practicum.filmorate.mapper.FilmResultExtractor;
+import ru.yandex.practicum.filmorate.mapper.MpaMapper;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MpaRating;
 
 import java.sql.PreparedStatement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 @AllArgsConstructor
@@ -193,7 +197,6 @@ public class FilmDbStorage implements FilmStorage {
         return jdbc.query(query.toString(), filmRatedMapper, count);
     }
 
-
     @Override
     public Film removeLike(Long id, Long userId) {
 
@@ -316,6 +319,20 @@ public class FilmDbStorage implements FilmStorage {
                 searchQuery + "%')\n" +
                 "ORDER BY like_count.like_count DESC";
         return jdbc.query(query, filmResultExtractor);
+    }
+
+    @Override
+    public List<Film> getRecommendations(Long id) {
+        String querry = "SELECT FILM_ID ID FROM LIKES l \n" +
+                "WHERE USER_ID = (SELECT l2.USER_ID FROM LIKES l, LIKES l2 \n" +
+                "WHERE l.FILM_ID = L2.FILM_ID \n" +
+                "AND l.USER_ID = ?\n" +
+                "AND l.USER_ID != L2.USER_ID \n" +
+                "GROUP BY l.FILM_ID, L2.USER_ID \n" +
+                "ORDER BY COUNT(*) LIMIT 1)\n" +
+                "AND FILM_ID NOT IN (SELECT FILM_ID FROM LIKES l2 WHERE USER_ID = ?)";
+
+        return jdbc.query(querry, (rs, rowNum) -> getFilm(rs.getLong("ID")), id, id);
     }
 
     /**
