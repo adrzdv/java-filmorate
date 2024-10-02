@@ -156,7 +156,7 @@ public class UserDbStorage implements UserStorage {
      * @param id
      * @return boolean
      */
-    private boolean checkId(long id) {
+    public boolean checkId(long id) {
         String query = "SELECT NAME FROM USERS WHERE ID = ?";
         try {
             Optional<String> checkString = Optional.ofNullable(jdbc.queryForObject(query, String.class, id));

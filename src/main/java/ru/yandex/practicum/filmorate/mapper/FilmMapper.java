@@ -31,9 +31,9 @@ public class FilmMapper implements RowMapper<Film> {
                 .build();
 
         do {
-            if (rs.getInt("genre_id") == 0) {
-                return film;
-            }
+//            if (rs.getInt("genre_id") == 0) {
+//                return film;
+//            }
             Genre genre = Genre.builder()
                     .id(rs.getInt("genre_id"))
                     .name(rs.getString("genre"))

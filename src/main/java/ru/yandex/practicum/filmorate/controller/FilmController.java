@@ -104,7 +104,7 @@ public class FilmController {
      */
     @DeleteMapping(value = "/{id}/like/{userId}")
     public Film dislike(@PathVariable Long id,
-                        @PathVariable Long userId) {
+                        @PathVariable Long userId) throws NotFoundException {
 
         return filmService.deleteLike(id, userId);
     }

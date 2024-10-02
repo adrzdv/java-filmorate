@@ -48,7 +48,7 @@ public class FilmService {
      * @return Film
      */
 
-    public Film deleteLike(Long id, Long userId) {
+    public Film deleteLike(Long id, Long userId) throws NotFoundException {
 
         return filmStorage.removeLike(id, userId);
 

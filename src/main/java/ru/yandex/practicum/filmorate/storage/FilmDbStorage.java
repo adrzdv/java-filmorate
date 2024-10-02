@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.mapper.FilmRatedMapper;
 import ru.yandex.practicum.filmorate.mapper.FilmResultExtractor;
@@ -30,6 +31,7 @@ public class FilmDbStorage implements FilmStorage {
     private final FilmMapper filmMapper;
     private final MpaMapper mpaMapper;
     private final FilmResultExtractor filmResultExtractor;
+    private final UserDbStorage userDbStorage;
     private final FilmRatedMapper filmRatedMapper;
     private final String sqlQuery = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION,\n" +
             "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE,\n" +
@@ -109,11 +111,26 @@ public class FilmDbStorage implements FilmStorage {
         String queryFilm = "UPDATE FILMS SET ID = ?, TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, " +
                 "DURATION = ?, MPA_RATE = ? WHERE ID = ?";
         String queryGenres = "UPDATE FILMS_GENRE SET GENRE_ID = ? WHERE FILM_ID = ?";
+        String queryGenreNotExist = "INSERT INTO FILMS_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?)";
         String queryDir = "UPDATE FILMS_DIRECTORS SET DIRECTOR_ID = ? WHERE FILM_ID = ?";
         String queryDirIfNotExist = "INSERT INTO FILMS_DIRECTORS (FILM_ID, DIRECTOR_ID) VALUES (?, ?)";
 
         List<Director> dirList = getFilm(film.getId()).getDirectors();
-        Director filmDirector = dirList.get(0);
+        Director filmDirector;
+        if (dirList != null) {
+            filmDirector = dirList.get(0);
+            if (film.getDirectors() != null && filmDirector.getId() != 0) {
+                List<Director> filmDirectors = film.getDirectors();
+                for (Director director : filmDirectors) {
+                    jdbc.update(queryDir, director.getId(), film.getId());
+                }
+            } else if (film.getDirectors() != null) {
+                List<Director> filmDirectors = film.getDirectors();
+                for (Director director : filmDirectors) {
+                    jdbc.update(queryDirIfNotExist, film.getId(), director.getId());
+                }
+            }
+        }
 
         jdbc.update(queryFilm, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getMpa().getId(), film.getId());
@@ -121,17 +138,6 @@ public class FilmDbStorage implements FilmStorage {
             List<Genre> filmGenres = film.getGenres();
             for (Genre genre : filmGenres) {
                 jdbc.update(queryGenres, genre.getId(), film.getId());
-            }
-        }
-        if (film.getDirectors() != null && filmDirector.getId() != 0) {
-            List<Director> filmDirectors = film.getDirectors();
-            for (Director director : filmDirectors) {
-                jdbc.update(queryDir, director.getId(), film.getId());
-            }
-        } else if (film.getDirectors() != null) {
-            List<Director> filmDirectors = film.getDirectors();
-            for (Director director : filmDirectors) {
-                jdbc.update(queryDirIfNotExist, film.getId(), director.getId());
             }
         }
 
@@ -198,10 +204,14 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film removeLike(Long id, Long userId) {
+    public Film removeLike(Long id, Long userId) throws NotFoundException {
 
+        if(!userDbStorage.checkId(userId)) {
+            throw new NotFoundException("User not found");
+        }
         String query = "DELETE FROM LIKES WHERE FILM_ID = ? AND USER_ID = ?";
         jdbc.update(query, id, userId);
+
         return getFilm(id);
     }
 

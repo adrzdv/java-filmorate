@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class DirectorController {
      * @throws NotFoundException
      */
     @PostMapping
-    public Director add(@RequestBody Director director) throws NotFoundException {
+    public Director add(@Valid @RequestBody Director director) throws NotFoundException {
 
         return directorService.add(director);
     }

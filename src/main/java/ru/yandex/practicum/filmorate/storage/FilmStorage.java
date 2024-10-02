@@ -70,7 +70,7 @@ public interface FilmStorage {
      * @param userId      user's id
      * @return Film
      */
-    Film removeLike(Long id, Long userId);
+    Film removeLike(Long id, Long userId) throws NotFoundException;
 
     /**
      * Get film by director
