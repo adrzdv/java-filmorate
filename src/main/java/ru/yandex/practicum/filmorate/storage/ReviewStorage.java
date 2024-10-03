@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.model.Review;
 
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +32,7 @@ public class ReviewStorage implements BaseStorage {
     public Review getOne(int reviewId) throws NotFoundException {
         String query = "SELECT * FROM REVIEWS WHERE ID = ?";
         Optional<Review> review = Optional.ofNullable(jdbc.queryForObject(query, reviewMapper, reviewId));
-        if(review.isEmpty()){
+        if (review.isEmpty()) {
             throw new NotFoundException("Review not found with id: " + reviewId);
         }
 
@@ -44,9 +43,7 @@ public class ReviewStorage implements BaseStorage {
         }
     }
 
-
     public Review addNew(Review newReview) throws BadRequest, NotFoundException {
-        
         if (newReview.getUserId() < 0) {
             throw new NotFoundException("Invalid user ID: " + newReview.getUserId());
         }
@@ -91,7 +88,6 @@ public class ReviewStorage implements BaseStorage {
 
         return getOne(key);
     }
-
 
     public Review update(Review review) throws NotFoundException,BadRequest {
 
@@ -208,8 +204,7 @@ public class ReviewStorage implements BaseStorage {
         if (usefulRate != 0) {
             String query = "UPDATE REVIEWS SET USEFUL_RATE = USEFUL_RATE - 2 WHERE ID = ?";
             int res = jdbc.update(query, reviewId);
-        }
-        else {
+        } else {
             String query = "UPDATE REVIEWS SET USEFUL_RATE = USEFUL_RATE - 1 WHERE ID = ?";
 
             int res = jdbc.update(query, reviewId);
