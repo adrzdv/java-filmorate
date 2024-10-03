@@ -24,7 +24,7 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method for getting all reviews
-     * @return
+     * @return list of reviews
      */
     @Override
     public List<Review> getAll() {
@@ -34,8 +34,8 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method for getting one review by id
-     * @param reviewId
-     * @return
+     * @param reviewId int review id
+     * @return object of Review
      * @throws NotFoundException
      */
     @Override
@@ -55,8 +55,8 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method for adding new review
-     * @param newReview
-     * @return
+     * @param newReview object of review
+     * @return added review
      * @throws BadRequest
      * @throws NotFoundException
      */
@@ -108,8 +108,8 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method for updating existing review
-     * @param review
-     * @return
+     * @param review object of review
+     * @return updated review
      * @throws NotFoundException
      * @throws BadRequest
      */
@@ -158,7 +158,7 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method for removing review
-     * @param id
+     * @param id id of review
      * @throws EmptyResultDataAccessException
      */
     public void deleteReviewById(int id) throws EmptyResultDataAccessException {
@@ -167,6 +167,12 @@ public class ReviewStorage implements BaseStorage {
         jdbc.update(query,id);
     }
 
+    /**
+     * Method to get all reviews
+     * @param filmId id of film
+     * @param count count of films that need to be taken out
+     * @return list of reviews
+     */
     public List<Review> getReviews(Integer filmId, Integer count) {
         if (count == null || count <= 0) {
             count = 10;
@@ -188,8 +194,8 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method to check if the user exists
-     * @param userId
-     * @return
+     * @param userId id of user
+     * @return boolean
      */
     public boolean userExists(int userId) {
         String query = "SELECT COUNT(*) FROM USERS WHERE ID = ?";
@@ -201,8 +207,8 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method to check if the review exists
-     * @param reviewId
-     * @return
+     * @param reviewId id of review
+     * @return boolean
      */
     public boolean reviewExists(int reviewId) {
         String query = "SELECT COUNT(*) FROM REVIEWS WHERE ID = ?";
@@ -214,8 +220,8 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method to like review
-     * @param reviewId
-     * @param userId
+     * @param reviewId id of review
+     * @param userId id of user
      * @throws NotFoundException
      */
     public void likeReview(int reviewId, int userId) throws NotFoundException {
@@ -237,8 +243,8 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method fot dislike review
-     * @param reviewId
-     * @param userId
+     * @param reviewId id of review
+     * @param userId id of user
      * @throws NotFoundException
      */
     public void dislikeReview(int reviewId, int userId) throws NotFoundException {
@@ -269,8 +275,8 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method to delete dislike
-     * @param reviewId
-     * @param userId
+     * @param reviewId id of review
+     * @param userId id of user
      * @throws NotFoundException
      */
     public void deleteDislikeReview(int reviewId, int userId) throws NotFoundException {
@@ -292,8 +298,8 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method to delete like
-     * @param reviewId
-     * @param userId
+     * @param reviewId id of review
+     * @param userId id of user
      * @throws NotFoundException
      */
     public void deleteLikeReview(int reviewId, int userId) throws NotFoundException {
