@@ -10,10 +10,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.mapper.FilmMapper;
-import ru.yandex.practicum.filmorate.mapper.FilmRatedMapper;
-import ru.yandex.practicum.filmorate.mapper.FilmResultExtractor;
-import ru.yandex.practicum.filmorate.mapper.MpaMapper;
+import ru.yandex.practicum.filmorate.mapper.*;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -110,36 +107,25 @@ public class FilmDbStorage implements FilmStorage {
 
         String queryFilm = "UPDATE FILMS SET ID = ?, TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, " +
                 "DURATION = ?, MPA_RATE = ? WHERE ID = ?";
-        String queryGenres = "UPDATE FILMS_GENRE SET GENRE_ID = ? WHERE FILM_ID = ?";
-        String queryGenreNotExist = "INSERT INTO FILMS_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?)";
+        String queryGenre = "INSERT INTO FILMS_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?)";
         String queryDir = "UPDATE FILMS_DIRECTORS SET DIRECTOR_ID = ? WHERE FILM_ID = ?";
         String queryDirIfNotExist = "INSERT INTO FILMS_DIRECTORS (FILM_ID, DIRECTOR_ID) VALUES (?, ?)";
 
-        List<Director> dirList = getFilm(film.getId()).getDirectors();
-        Director filmDirector;
-        if (dirList != null) {
-            filmDirector = dirList.get(0);
-            if (film.getDirectors() != null && filmDirector.getId() != 0) {
-                List<Director> filmDirectors = film.getDirectors();
-                for (Director director : filmDirectors) {
-                    jdbc.update(queryDir, director.getId(), film.getId());
-                }
-            } else if (film.getDirectors() != null) {
-                List<Director> filmDirectors = film.getDirectors();
-                for (Director director : filmDirectors) {
-                    jdbc.update(queryDirIfNotExist, film.getId(), director.getId());
-                }
-            }
+        Film filmFromDb = getFilm(film.getId());
+        List<Director> dirList = filmFromDb.getDirectors();
+        List<Genre> genList = filmFromDb.getGenres();
+
+        if (!genList.equals(film.getGenres()) && dirList.equals(film.getDirectors())) {
+            addGenre(sqlQuery, film, genList, queryGenre);
+        } else if (!genList.equals(film.getGenres()) && !dirList.equals(film.getDirectors())) {
+            addGenre(sqlQuery, film, genList, queryGenre);
+            addDirector(sqlQuery, dirList, film, queryDir, queryDirIfNotExist);
+        } else if (genList.equals(film.getGenres()) && !dirList.equals(film.getDirectors())) {
+            addDirector(sqlQuery, dirList, film, queryDir, queryDirIfNotExist);
         }
 
         jdbc.update(queryFilm, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getMpa().getId(), film.getId());
-        if (film.getGenres() != null) {
-            List<Genre> filmGenres = film.getGenres();
-            for (Genre genre : filmGenres) {
-                jdbc.update(queryGenres, genre.getId(), film.getId());
-            }
-        }
 
         return getFilm(film.getId());
     }
@@ -157,8 +143,7 @@ public class FilmDbStorage implements FilmStorage {
     public Film getFilm(Long id) {
 
         String query = sqlQuery +
-                "WHERE FILMS.ID = ?" +
-                "ORDER BY FILMS.ID";
+                "WHERE FILMS.ID = ?";
 
         return jdbc.queryForObject(query, filmMapper, id);
 
@@ -206,7 +191,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film removeLike(Long id, Long userId) throws NotFoundException {
 
-        if(!userDbStorage.checkId(userId)) {
+        if (!userDbStorage.checkId(userId)) {
             throw new NotFoundException("User not found");
         }
         String query = "DELETE FROM LIKES WHERE FILM_ID = ? AND USER_ID = ?";
@@ -216,13 +201,15 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getByDirector(int id, String param) {
+    public List<Film> getByDirector(int id, String param) throws NotFoundException {
 
+        //String queryCheckDirector = "SELECT NAME FROM DIRECTORS WHERE ID = ?";
+        List<Film> result = new ArrayList<>();
         if (param.equals("year")) {
             String query = sqlQuery +
-                    "WHERE DIRECTORS.ID = ?\n" +
+                    "WHERE DIRECTOR_ID = ?\n" +
                     "ORDER BY FILMS.RELEASE_DATE";
-            return jdbc.query(query, filmResultExtractor, id);
+            result = jdbc.query(query, filmResultExtractor, id);
 
         } else if (param.equals("likes")) {
             String query = sqlQuery +
@@ -230,10 +217,13 @@ public class FilmDbStorage implements FilmStorage {
                     "GROUP BY FILM_ID) AS like_count ON like_count.id_film = FILMS.ID\n" +
                     "WHERE DIRECTORS.ID = ?\n" +
                     "ORDER BY like_count.like_count DESC";
-            return jdbc.query(query, filmResultExtractor, id);
+            result = jdbc.query(query, filmResultExtractor, id);
         }
 
-        return null;
+        if (result.isEmpty()) {
+            throw new NotFoundException("Not found");
+        }
+        return result;
     }
 
     @Override
@@ -265,6 +255,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> search(String searchQuery, String params) {
         String[] searchParams = params.split(",");
+        String searchString = searchQuery.toLowerCase();
         String resp = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, \n" +
                 "FILMS.DURATION, MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, \n" +
                 "GENRE.NAME AS GENRE, \n" +
@@ -280,15 +271,29 @@ public class FilmDbStorage implements FilmStorage {
 
         if (searchParams.length == 1) {
             if (searchParams[0].equals("director")) {
-                result = searchByDirector(resp, searchQuery);
+                result = searchByDirector(resp, searchString);
             } else if (searchParams[0].equals("title")) {
-                result = searchByTitle(resp, searchQuery);
+                result = searchByTitle(resp, searchString);
             }
         } else if (searchParams.length == 2) {
-            result = searchByBothParams(resp, searchQuery);
+            result = searchByBothParams(resp, searchString);
         }
 
         return result;
+    }
+
+    @Override
+    public List<Film> getRecommendations(Long id) {
+        String query = "SELECT FILM_ID ID FROM LIKES l \n" +
+                "WHERE USER_ID = (SELECT l2.USER_ID FROM LIKES l, LIKES l2 \n" +
+                "WHERE l.FILM_ID = L2.FILM_ID \n" +
+                "AND l.USER_ID = ?\n" +
+                "AND l.USER_ID != L2.USER_ID \n" +
+                "GROUP BY l.FILM_ID, L2.USER_ID \n" +
+                "ORDER BY COUNT(*) LIMIT 1)\n" +
+                "AND FILM_ID NOT IN (SELECT FILM_ID FROM LIKES l2 WHERE USER_ID = ?)";
+
+        return jdbc.query(query, (rs, rowNum) -> getFilm(rs.getLong("ID")), id, id);
     }
 
     /**
@@ -299,7 +304,8 @@ public class FilmDbStorage implements FilmStorage {
      * @return List of films
      */
     private List<Film> searchByTitle(String sqlQuery, String searchQuery) {
-        String query = sqlQuery + "WHERE FILMS.TITLE LIKE '%" + searchQuery + "%'\n" +
+
+        String query = sqlQuery + "WHERE LOWER(FILMS.TITLE) LIKE '%" + searchQuery + "%'\n" +
                 "ORDER BY like_count.like_count DESC";
         return jdbc.query(query, filmResultExtractor);
     }
@@ -312,7 +318,8 @@ public class FilmDbStorage implements FilmStorage {
      * @return List of films
      */
     private List<Film> searchByDirector(String sqlQuery, String searchQuery) {
-        String query = sqlQuery + "WHERE DIRECTORS.NAME LIKE '%" + searchQuery + "%'\n" +
+
+        String query = sqlQuery + "WHERE LOWER(DIRECTORS.NAME) LIKE '%" + searchQuery + "%'\n" +
                 "ORDER BY like_count.like_count DESC";
         return jdbc.query(query, filmResultExtractor);
     }
@@ -325,24 +332,11 @@ public class FilmDbStorage implements FilmStorage {
      * @return List of films
      */
     private List<Film> searchByBothParams(String sqlQuery, String searchQuery) {
-        String query = sqlQuery + "WHERE (FILMS.TITLE LIKE '%" + searchQuery + "%' OR DIRECTORS.NAME LIKE '%" +
+
+        String query = sqlQuery + "WHERE (LOWER(FILMS.TITLE) LIKE '%" + searchQuery + "%' OR LOWER(DIRECTORS.NAME) LIKE '%" +
                 searchQuery + "%')\n" +
                 "ORDER BY like_count.like_count DESC";
         return jdbc.query(query, filmResultExtractor);
-    }
-
-    @Override
-    public List<Film> getRecommendations(Long id) {
-        String querry = "SELECT FILM_ID ID FROM LIKES l \n" +
-                "WHERE USER_ID = (SELECT l2.USER_ID FROM LIKES l, LIKES l2 \n" +
-                "WHERE l.FILM_ID = L2.FILM_ID \n" +
-                "AND l.USER_ID = ?\n" +
-                "AND l.USER_ID != L2.USER_ID \n" +
-                "GROUP BY l.FILM_ID, L2.USER_ID \n" +
-                "ORDER BY COUNT(*) LIMIT 1)\n" +
-                "AND FILM_ID NOT IN (SELECT FILM_ID FROM LIKES l2 WHERE USER_ID = ?)";
-
-        return jdbc.query(querry, (rs, rowNum) -> getFilm(rs.getLong("ID")), id, id);
     }
 
     /**
@@ -368,6 +362,74 @@ public class FilmDbStorage implements FilmStorage {
         newFilm.setGenres(newGenreList);
 
         return newFilm;
+    }
+
+    /**
+     * Add directors in updated film
+     *
+     * @param sql                SQL string
+     * @param dirList            list of directors from database
+     * @param film               film for update
+     * @param queryDir           SQL string for add new director, if it exists
+     * @param queryDirIfNotExist SQL string for add director, if it not exists
+     */
+    private void addDirector(String sql, List<Director> dirList, Film film, String queryDir, String queryDirIfNotExist) {
+        Director filmDirector;
+        if (dirList != null && !dirList.isEmpty()) {
+            String delQuery = "DELETE FROM FILMS_DIRECTORS WHERE FILM_ID = ?";
+            jdbc.update(delQuery, film.getId());
+            filmDirector = dirList.get(0);
+            if (film.getDirectors() != null && filmDirector.getId() != 0) {
+                List<Director> filmDirectors = film.getDirectors();
+                for (Director director : filmDirectors) {
+                    jdbc.update(queryDir, director.getId(), film.getId());
+                }
+            } else if (film.getDirectors() != null) {
+                List<Director> filmDirectors = film.getDirectors();
+                for (Director director : filmDirectors) {
+                    jdbc.update(queryDirIfNotExist, film.getId(), director.getId());
+                }
+            }
+        } else {
+            if (film.getDirectors() != null) {
+                String delQuery = "DELETE FROM FILMS_DIRECTORS WHERE FILM_ID = ?";
+                jdbc.update(delQuery, film.getId());
+                for (Director director : film.getDirectors()) {
+                    jdbc.update(queryDirIfNotExist, film.getId(), director.getId());
+                }
+            }
+        }
+    }
+
+    /**
+     * Add updated films genres
+     *
+     * @param sql                SQL string
+     * @param film               film for update
+     * @param genList            list of genres in database
+     * @param queryGenreNotExist SQL string for insert genres in database
+     */
+    private void addGenre(String sql, Film film, List<Genre> genList, String queryGenreNotExist) {
+        if (genList != null && !genList.isEmpty()) {
+            if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+                String queryDelete = "DELETE FROM FILMS_GENRE WHERE FILM_ID = ?";
+                jdbc.update(queryDelete, film.getId());
+                for (Genre genre : film.getGenres()) {
+                    jdbc.update(queryGenreNotExist, film.getId(), genre.getId());
+                }
+            } else if (film.getGenres().size() == 0) {
+                String queryDelete = "DELETE FROM FILMS_GENRE WHERE FILM_ID = ?";
+                jdbc.update(queryDelete, film.getId());
+            }
+        } else {
+            if (film.getGenres() != null) {
+                String queryDelete = "DELETE FROM FILMS_GENRE WHERE FILM_ID = ?";
+                jdbc.update(queryDelete, film.getId());
+                for (Genre genre : film.getGenres()) {
+                    jdbc.update(queryGenreNotExist, film.getId(), genre.getId());
+                }
+            }
+        }
     }
 
 

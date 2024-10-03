@@ -150,7 +150,7 @@ public class FilmController {
      */
     @GetMapping(value = "/director/{id}")
     public List<Film> getByDirector(@PathVariable int id,
-                                    @RequestParam String sortBy) {
+                                    @RequestParam String sortBy) throws NotFoundException {
         return filmService.getByDirector(id, sortBy);
     }
 

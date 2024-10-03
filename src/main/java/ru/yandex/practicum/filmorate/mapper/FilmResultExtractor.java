@@ -16,20 +16,27 @@ import java.util.*;
 public class FilmResultExtractor implements ResultSetExtractor<List<Film>> {
     @Override
     public List<Film> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Long, Film> filmList = new HashMap<>();
+        Map<Long, Film> filmList = new LinkedHashMap<>();
         while (rs.next()) {
             if (filmList.containsKey(rs.getLong("id"))) {
                 Genre genre = Genre.builder()
                         .id(rs.getInt("genre_id"))
                         .name(rs.getString("genre"))
                         .build();
-                filmList.get(rs.getLong("id")).getGenres().add(genre);
+                if (genre.getId() != 0) {
+                    if (!filmList.get(rs.getLong("id")).getGenres().contains(genre)) {
+                        filmList.get(rs.getLong("id")).getGenres().add(genre);
+                    }
+                }
+
                 Director director = Director.builder()
                         .id(rs.getInt("director_id"))
                         .name(rs.getString("director_name"))
                         .build();
                 if (director.getId() != 0) {
-                    filmList.get(rs.getLong("id")).getDirectors().add(director);
+                    if (!filmList.get(rs.getLong("id")).getDirectors().contains(director)) {
+                        filmList.get(rs.getLong("id")).getDirectors().add(director);
+                    }
                 }
             } else {
                 Genre genre = Genre.builder()
@@ -54,9 +61,11 @@ public class FilmResultExtractor implements ResultSetExtractor<List<Film>> {
                         .directors(new ArrayList<>())
                         .build();
                 filmList.put(film.getId(), film);
-                filmList.get(film.getId()).getGenres().add(genre);
                 if (director.getId() != 0) {
                     filmList.get(film.getId()).getDirectors().add(director);
+                }
+                if (genre.getId() != 0) {
+                    filmList.get(film.getId()).getGenres().add(genre);
                 }
             }
         }

@@ -79,7 +79,7 @@ public interface FilmStorage {
      * @param param parameter for sorting
      * @return List of film
      */
-    List<Film> getByDirector(int id, String param);
+    List<Film> getByDirector(int id, String param) throws NotFoundException;
 
      /**
      * Returns a list of common films

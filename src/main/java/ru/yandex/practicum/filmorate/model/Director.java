@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Director object class
@@ -15,6 +16,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"id"})
 public class Director {
 
     private int id;

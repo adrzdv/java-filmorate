@@ -24,6 +24,8 @@ public class FilmMapper implements RowMapper<Film> {
                 .description(rs.getString("description"))
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getLong("duration"))
+                .genres(genreList)
+                .directors(directorList)
                 .mpa(MpaRating.builder()
                         .id(rs.getInt("mpa_id"))
                         .name(rs.getString("mpa_rate"))
@@ -31,20 +33,22 @@ public class FilmMapper implements RowMapper<Film> {
                 .build();
 
         do {
-//            if (rs.getInt("genre_id") == 0) {
-//                return film;
-//            }
+
             Genre genre = Genre.builder()
                     .id(rs.getInt("genre_id"))
                     .name(rs.getString("genre"))
                     .build();
-            genreList.add(genre);
+            if (!genreList.contains(genre) && rs.getInt("genre_id") != 0) {
+                genreList.add(genre);
+            }
 
             Director director = Director.builder()
                     .id(rs.getInt("director_id"))
                     .name(rs.getString("director_name"))
                     .build();
-            directorList.add(director);
+            if (!directorList.contains(director) && rs.getInt("director_id") != 0) {
+                directorList.add(director);
+            }
 
         } while (rs.next());
         film.setGenres(genreList);

@@ -105,7 +105,7 @@ public class FilmService {
     }
 
 
-    public List<Film> getByDirector(int id, String param) {
+    public List<Film> getByDirector(int id, String param) throws NotFoundException {
 
         return filmStorage.getByDirector(id, param);
     }
