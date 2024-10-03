@@ -1,5 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,9 +21,17 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class Review {
-    private int id;
+    @NotNull(message = "Review ID cannot be null")
+    private int reviewId;
+    @NotBlank(message = "Content cannot be blank")
     private String content;
-    private int usefulRate;
+    private int useful;
+    @NotNull(message = "User ID cannot be null")
     private int userId;
+    @NotNull(message = "Film ID cannot be null")
     private int filmId;
+    @JsonProperty("isPositive")
+    private Boolean isPositive;
 }
+
+
