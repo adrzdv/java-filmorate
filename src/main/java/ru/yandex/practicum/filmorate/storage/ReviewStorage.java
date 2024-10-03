@@ -22,12 +22,22 @@ public class ReviewStorage implements BaseStorage {
     private final JdbcTemplate jdbc;
     private final ReviewMapper reviewMapper;
 
+    /**
+     * Method for getting all reviews
+     * @return
+     */
     @Override
     public List<Review> getAll() {
         String query = "SELECT * FROM REVIEWS";
         return jdbc.query(query,reviewMapper);
     }
 
+    /**
+     * Method for getting one review by id
+     * @param reviewId
+     * @return
+     * @throws NotFoundException
+     */
     @Override
     public Review getOne(int reviewId) throws NotFoundException {
         String query = "SELECT * FROM REVIEWS WHERE ID = ?";
@@ -43,6 +53,13 @@ public class ReviewStorage implements BaseStorage {
         }
     }
 
+    /**
+     * Method for adding new review
+     * @param newReview
+     * @return
+     * @throws BadRequest
+     * @throws NotFoundException
+     */
     public Review addNew(Review newReview) throws BadRequest, NotFoundException {
         if (newReview.getUserId() < 0) {
             throw new NotFoundException("Invalid user ID: " + newReview.getUserId());
@@ -89,6 +106,14 @@ public class ReviewStorage implements BaseStorage {
         return getOne(key);
     }
 
+    /**
+     * Method for updating existing review
+     * @param review
+     * @return
+     * @throws NotFoundException
+     * @throws BadRequest
+     */
+
     public Review update(Review review) throws NotFoundException,BadRequest {
 
         if (review.getUserId() <= 0) {
@@ -131,6 +156,11 @@ public class ReviewStorage implements BaseStorage {
         return getOne(review.getReviewId());
     }
 
+    /**
+     * Method for removing review
+     * @param id
+     * @throws EmptyResultDataAccessException
+     */
     public void deleteReviewById(int id) throws EmptyResultDataAccessException {
 
         String query = "DELETE FROM REVIEWS WHERE ID = ?";
@@ -156,6 +186,11 @@ public class ReviewStorage implements BaseStorage {
         return jdbc.query(query, reviewMapper, params);
     }
 
+    /**
+     * Method to check if the user exists
+     * @param userId
+     * @return
+     */
     public boolean userExists(int userId) {
         String query = "SELECT COUNT(*) FROM USERS WHERE ID = ?";
 
@@ -164,6 +199,11 @@ public class ReviewStorage implements BaseStorage {
         return count != null && count > 0;
     }
 
+    /**
+     * Method to check if the review exists
+     * @param reviewId
+     * @return
+     */
     public boolean reviewExists(int reviewId) {
         String query = "SELECT COUNT(*) FROM REVIEWS WHERE ID = ?";
 
@@ -172,6 +212,12 @@ public class ReviewStorage implements BaseStorage {
         return count != null && count > 0;
     }
 
+    /**
+     * Method to like review
+     * @param reviewId
+     * @param userId
+     * @throws NotFoundException
+     */
     public void likeReview(int reviewId, int userId) throws NotFoundException {
         if (!userExists(userId)) {
             throw new NotFoundException("User not found");
@@ -189,6 +235,12 @@ public class ReviewStorage implements BaseStorage {
         }
     }
 
+    /**
+     * Method fot dislike review
+     * @param reviewId
+     * @param userId
+     * @throws NotFoundException
+     */
     public void dislikeReview(int reviewId, int userId) throws NotFoundException {
         if (!userExists(userId)) {
             throw new NotFoundException("User not found");
@@ -215,6 +267,12 @@ public class ReviewStorage implements BaseStorage {
         }
     }
 
+    /**
+     * Method to delete dislike
+     * @param reviewId
+     * @param userId
+     * @throws NotFoundException
+     */
     public void deleteDislikeReview(int reviewId, int userId) throws NotFoundException {
         if (!userExists(userId)) {
             throw new NotFoundException("User not found");
@@ -232,6 +290,12 @@ public class ReviewStorage implements BaseStorage {
         }
     }
 
+    /**
+     * Method to delete like
+     * @param reviewId
+     * @param userId
+     * @throws NotFoundException
+     */
     public void deleteLikeReview(int reviewId, int userId) throws NotFoundException {
         if (!userExists(userId)) {
             throw new NotFoundException("User not found");

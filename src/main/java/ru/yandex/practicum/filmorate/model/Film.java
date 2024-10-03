@@ -40,5 +40,4 @@ public class Film {
     private MpaRating mpa;
     private List<Genre> genres;
     private List<Director> directors;
-    private List<Review> reviews;
 }
