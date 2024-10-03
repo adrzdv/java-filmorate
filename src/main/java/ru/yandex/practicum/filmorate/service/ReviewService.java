@@ -27,7 +27,7 @@ public class ReviewService {
         return reviewStorage.addNew(newReview);
     }
 
-    public Review update(Review review) throws NotFoundException {
+    public Review update(Review review) throws NotFoundException, BadRequest {
         return reviewStorage.update(review);
     }
 
