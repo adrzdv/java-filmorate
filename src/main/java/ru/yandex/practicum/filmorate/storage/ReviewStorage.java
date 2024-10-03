@@ -24,16 +24,18 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method for getting all reviews
+     *
      * @return list of reviews
      */
     @Override
     public List<Review> getAll() {
         String query = "SELECT * FROM REVIEWS";
-        return jdbc.query(query,reviewMapper);
+        return jdbc.query(query, reviewMapper);
     }
 
     /**
      * Method for getting one review by id
+     *
      * @param reviewId int review id
      * @return object of Review
      * @throws NotFoundException
@@ -55,6 +57,7 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method for adding new review
+     *
      * @param newReview object of review
      * @return added review
      * @throws BadRequest
@@ -108,13 +111,14 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method for updating existing review
+     *
      * @param review object of review
      * @return updated review
      * @throws NotFoundException
      * @throws BadRequest
      */
 
-    public Review update(Review review) throws NotFoundException,BadRequest {
+    public Review update(Review review) throws NotFoundException, BadRequest {
 
         if (review.getUserId() <= 0) {
             throw new BadRequest("Invalid user ID: " + review.getUserId());
@@ -145,9 +149,9 @@ public class ReviewStorage implements BaseStorage {
             throw new NotFoundException("Film not found with id: " + review.getFilmId());
         }
 
-        String query = "UPDATE REVIEWS SET REVIEW_CONTENT = ?, REVIEW_TYPE = ?, USEFUL_RATE = ? WHERE ID = ?";
+        String query = "UPDATE REVIEWS SET REVIEW_CONTENT = ?, REVIEW_TYPE = ? WHERE ID = ?";
         int res = jdbc.update(query, review.getContent(), review.getIsPositive() ? "positive" : "negative",
-                review.getUseful(), review.getReviewId());
+                review.getReviewId());
 
         if (res != 1) {
             throw new NotFoundException("Failed to update review with id: " + review.getReviewId());
@@ -158,19 +162,21 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method for removing review
+     *
      * @param id id of review
      * @throws EmptyResultDataAccessException
      */
     public void deleteReviewById(int id) throws EmptyResultDataAccessException {
 
         String query = "DELETE FROM REVIEWS WHERE ID = ?";
-        jdbc.update(query,id);
+        jdbc.update(query, id);
     }
 
     /**
      * Method to get all reviews
+     *
      * @param filmId id of film
-     * @param count count of films that need to be taken out
+     * @param count  count of films that need to be taken out
      * @return list of reviews
      */
     public List<Review> getReviews(Integer filmId, Integer count) {
@@ -193,35 +199,10 @@ public class ReviewStorage implements BaseStorage {
     }
 
     /**
-     * Method to check if the user exists
-     * @param userId id of user
-     * @return boolean
-     */
-    public boolean userExists(int userId) {
-        String query = "SELECT COUNT(*) FROM USERS WHERE ID = ?";
-
-        Integer count = jdbc.queryForObject(query, Integer.class, userId);
-
-        return count != null && count > 0;
-    }
-
-    /**
-     * Method to check if the review exists
-     * @param reviewId id of review
-     * @return boolean
-     */
-    public boolean reviewExists(int reviewId) {
-        String query = "SELECT COUNT(*) FROM REVIEWS WHERE ID = ?";
-
-        Integer count = jdbc.queryForObject(query, Integer.class, reviewId);
-
-        return count != null && count > 0;
-    }
-
-    /**
      * Method to like review
+     *
      * @param reviewId id of review
-     * @param userId id of user
+     * @param userId   id of user
      * @throws NotFoundException
      */
     public void likeReview(int reviewId, int userId) throws NotFoundException {
@@ -243,8 +224,9 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method fot dislike review
+     *
      * @param reviewId id of review
-     * @param userId id of user
+     * @param userId   id of user
      * @throws NotFoundException
      */
     public void dislikeReview(int reviewId, int userId) throws NotFoundException {
@@ -275,8 +257,9 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method to delete dislike
+     *
      * @param reviewId id of review
-     * @param userId id of user
+     * @param userId   id of user
      * @throws NotFoundException
      */
     public void deleteDislikeReview(int reviewId, int userId) throws NotFoundException {
@@ -298,8 +281,9 @@ public class ReviewStorage implements BaseStorage {
 
     /**
      * Method to delete like
+     *
      * @param reviewId id of review
-     * @param userId id of user
+     * @param userId   id of user
      * @throws NotFoundException
      */
     public void deleteLikeReview(int reviewId, int userId) throws NotFoundException {
@@ -317,5 +301,33 @@ public class ReviewStorage implements BaseStorage {
         if (res != 1) {
             throw new NotFoundException("Review not found ");
         }
+    }
+
+    /**
+     * Method to check if the user exists
+     *
+     * @param userId id of user
+     * @return boolean
+     */
+    private boolean userExists(int userId) {
+        String query = "SELECT COUNT(*) FROM USERS WHERE ID = ?";
+
+        Integer count = jdbc.queryForObject(query, Integer.class, userId);
+
+        return count != null && count > 0;
+    }
+
+    /**
+     * Method to check if the review exists
+     *
+     * @param reviewId id of review
+     * @return boolean
+     */
+    private boolean reviewExists(int reviewId) {
+        String query = "SELECT COUNT(*) FROM REVIEWS WHERE ID = ?";
+
+        Integer count = jdbc.queryForObject(query, Integer.class, reviewId);
+
+        return count != null && count > 0;
     }
 }
