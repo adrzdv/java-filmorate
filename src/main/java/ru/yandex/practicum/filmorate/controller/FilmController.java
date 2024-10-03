@@ -63,7 +63,7 @@ public class FilmController {
      * @throws NotFoundException
      */
     @PutMapping
-    public Film update(@Valid @RequestBody Film film) throws NotFoundException {
+    public Film update(@Valid @RequestBody Film film) throws NotFoundException, BadRequest {
 
         return filmService.update(film);
     }

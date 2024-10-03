@@ -103,7 +103,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film update(Film film) {
+    public Film update(Film film) throws BadRequest {
 
         String queryFilm = "UPDATE FILMS SET ID = ?, TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, " +
                 "DURATION = ?, MPA_RATE = ? WHERE ID = ?";
@@ -115,13 +115,15 @@ public class FilmDbStorage implements FilmStorage {
         List<Director> dirList = filmFromDb.getDirectors();
         List<Genre> genList = filmFromDb.getGenres();
 
+        Film filmForAdd = deleteDuplicates(film);
+
         if (!genList.equals(film.getGenres()) && dirList.equals(film.getDirectors())) {
-            addGenre(sqlQuery, film, genList, queryGenre);
+            addGenre(sqlQuery, filmForAdd, genList, queryGenre);
         } else if (!genList.equals(film.getGenres()) && !dirList.equals(film.getDirectors())) {
-            addGenre(sqlQuery, film, genList, queryGenre);
-            addDirector(sqlQuery, dirList, film, queryDir, queryDirIfNotExist);
+            addGenre(sqlQuery, filmForAdd, genList, queryGenre);
+            addDirector(sqlQuery, dirList, filmForAdd, queryDir, queryDirIfNotExist);
         } else if (genList.equals(film.getGenres()) && !dirList.equals(film.getDirectors())) {
-            addDirector(sqlQuery, dirList, film, queryDir, queryDirIfNotExist);
+            addDirector(sqlQuery, dirList, filmForAdd, queryDir, queryDirIfNotExist);
         }
 
         jdbc.update(queryFilm, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
@@ -350,7 +352,8 @@ public class FilmDbStorage implements FilmStorage {
     private Film deleteDuplicates(Film film) throws BadRequest {
 
         if (film.getGenres() == null) {
-            throw new BadRequest("Some troubles");
+            //throw new BadRequest("Some troubles");
+            return film;
         }
         List<Genre> genreList = film.getGenres();
         List<Genre> newGenreList = new ArrayList<>();
@@ -411,21 +414,16 @@ public class FilmDbStorage implements FilmStorage {
      * @param queryGenreNotExist SQL string for insert genres in database
      */
     private void addGenre(String sql, Film film, List<Genre> genList, String queryGenreNotExist) {
+        String queryDelete = "DELETE FROM FILMS_GENRE WHERE FILM_ID = ?";
+        jdbc.update(queryDelete, film.getId());
         if (genList != null && !genList.isEmpty()) {
             if (film.getGenres() != null && !film.getGenres().isEmpty()) {
-                String queryDelete = "DELETE FROM FILMS_GENRE WHERE FILM_ID = ?";
-                jdbc.update(queryDelete, film.getId());
                 for (Genre genre : film.getGenres()) {
                     jdbc.update(queryGenreNotExist, film.getId(), genre.getId());
                 }
-            } else if (film.getGenres().size() == 0) {
-                String queryDelete = "DELETE FROM FILMS_GENRE WHERE FILM_ID = ?";
-                jdbc.update(queryDelete, film.getId());
             }
         } else {
             if (film.getGenres() != null) {
-                String queryDelete = "DELETE FROM FILMS_GENRE WHERE FILM_ID = ?";
-                jdbc.update(queryDelete, film.getId());
                 for (Genre genre : film.getGenres()) {
                     jdbc.update(queryGenreNotExist, film.getId(), genre.getId());
                 }

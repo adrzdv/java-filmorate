@@ -89,7 +89,7 @@ public class FilmService {
      * @throws NotFoundException
      */
 
-    public Film update(Film film) throws NotFoundException {
+    public Film update(Film film) throws NotFoundException, BadRequest {
 
         return filmStorage.update(film);
     }

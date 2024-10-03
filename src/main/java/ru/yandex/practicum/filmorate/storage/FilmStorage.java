@@ -24,7 +24,7 @@ public interface FilmStorage {
      * @param film film for update
      * @return Film
      */
-    Film update(Film film);
+    Film update(Film film) throws BadRequest;
 
     /**
      * Get all existing films
