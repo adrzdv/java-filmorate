@@ -160,7 +160,8 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getMostRated(int count, Integer genreId, Integer year) {
-        StringBuilder query = new StringBuilder("SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION, " +
+        StringBuilder query = new StringBuilder("SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, " +
+                "FILMS.RELEASE_DATE, FILMS.DURATION, " +
                 "FILMS.MPA_RATE AS MPA_ID, MPA.NAME AS MPA_RATE, COUNT(LIKES.USER_ID) AS LIKES " +
                 "FROM FILMS " +
                 "LEFT JOIN MPA ON MPA.ID = FILMS.MPA_RATE " +
