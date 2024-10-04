@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -31,11 +32,13 @@ public class FeedDbStorage implements FeedStorage {
             throw new NotFoundException("Incorrect user's id");
         }
 
-        Long tim = Timestamp.from(Instant.now()).getTime();
-        String query = "INSERT INTO FEED (TIMESTAMP, USER_ID, EVENT_TYPE, OPERATION, ENTITY_ID) VALUES (?, ?, ?, ?, ?)";
-        jdbc.update(query, tim, userId,
-                eventType.name(), operation.name(), entityId);
-        System.out.println(getOne(tim) + " " + eventType.name() + " " + operation.name() + " " + userId + " " + entityId);
+            Long tim = Timestamp.from(Instant.now()).getTime(); //не забудь удалить
+            String query = "INSERT INTO FEED (TIMESTAMP, USER_ID, EVENT_TYPE, OPERATION, ENTITY_ID) VALUES (?, ?, ?, ?, ?)";
+            jdbc.update(query, tim, userId,
+                    eventType.name(), operation.name(), entityId);
+            //ниже тоже удалить
+            System.out.println(getOne(tim) + " " + eventType.name() + " " + operation.name() + " " + userId + " " + entityId);
+
     }
 
     @Override
@@ -47,6 +50,7 @@ public class FeedDbStorage implements FeedStorage {
         return jdbc.query(query, eventMapper, userId);
     }
 
+    //тоже удалить
     private Event getOne(Long time) {
         String sql = "SELECT * FROM FEED WHERE TIMESTAMP = ?";
         return jdbc.queryForObject(sql, eventMapper, time);

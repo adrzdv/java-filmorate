@@ -37,7 +37,7 @@ public class ReviewService {
     }
 
     public Review update(Review review) throws NotFoundException, BadRequest {
-
+        feedStorage.createEvent(review.getUserId(), EventType.REVIEW, Operations.UPDATE, review.getReviewId());
         return reviewStorage.update(review);
     }
 
