@@ -11,10 +11,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.*;
-import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MpaRating;
+import ru.yandex.practicum.filmorate.model.*;
 
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
@@ -30,6 +27,7 @@ public class FilmDbStorage implements FilmStorage {
     private final FilmResultExtractor filmResultExtractor;
     private final UserDbStorage userDbStorage;
     private final FilmRatedMapper filmRatedMapper;
+    private final EventStorage eventStorage;
     private final String sqlQuery = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION,\n" +
             "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE,\n" +
             "DIRECTORS.ID AS DIRECTOR_ID, DIRECTORS.NAME AS DIRECTOR_NAME FROM FILMS\n" +
@@ -157,6 +155,8 @@ public class FilmDbStorage implements FilmStorage {
         String query = "INSERT INTO LIKES (FILM_ID, USER_ID) VALUES (?, ?)";
         jdbc.update(query, id, userId);
 
+        eventStorage.createEvent(userId, EventType.LIKE, Operations.ADD, id, jdbc);
+
         return getFilm(id);
     }
 
@@ -199,6 +199,8 @@ public class FilmDbStorage implements FilmStorage {
         }
         String query = "DELETE FROM LIKES WHERE FILM_ID = ? AND USER_ID = ?";
         jdbc.update(query, id, userId);
+
+        eventStorage.createEvent(userId, EventType.LIKE, Operations.REMOVE, id, jdbc);
 
         return getFilm(id);
     }

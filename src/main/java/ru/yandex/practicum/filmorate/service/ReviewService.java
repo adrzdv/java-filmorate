@@ -31,19 +31,18 @@ public class ReviewService {
 
     public Review addNew(Review newReview) throws BadRequest, NotFoundException {
 
-        eventStorage.createEvent(newReview.getUserId(), EventType.REVIEW, Operations.ADD, newReview.getReviewId());
         return reviewStorage.addNew(newReview);
     }
 
     public Review update(Review review) throws NotFoundException, BadRequest {
-        eventStorage.createEvent(review.getUserId(), EventType.REVIEW, Operations.UPDATE, review.getReviewId());
+
         return reviewStorage.update(review);
     }
 
     public void deleteReviewById(int id) throws EmptyResultDataAccessException, NotFoundException {
         reviewStorage.deleteReviewById(id);
-        eventStorage.createEvent(reviewStorage.getOne(id).getUserId(), EventType.REVIEW, Operations.REMOVE,reviewStorage.getOne(id).getReviewId());
     }
+
 
     public List<Review> getReviews(Integer filmId, Integer count) {
         return reviewStorage.getReviews(filmId,count);

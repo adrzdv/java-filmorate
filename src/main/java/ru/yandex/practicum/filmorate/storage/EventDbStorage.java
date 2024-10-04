@@ -17,10 +17,8 @@ public class EventDbStorage implements EventStorage {
     private final JdbcTemplate jdbc;
 
     @Override
-    public void createEvent(long userId, EventType eventType, Operations operation, long entityId) throws NotFoundException {
-        if (userId < 0) {
-            throw new NotFoundException("incorrect userID");
-        }
+    public void createEvent(long userId, EventType eventType, Operations operation, long entityId, JdbcTemplate jdbc) {
+
         long timestamp = Timestamp.from(Instant.now()).getTime();
         String sqlQuery = "INSERT INTO feeds (user_id, timestamp, event_type, operation, entity_id) VALUES (?, ?, ?, ?, ?)";
         jdbc.update(sqlQuery, userId, timestamp, eventType.name(), operation.name(), entityId);

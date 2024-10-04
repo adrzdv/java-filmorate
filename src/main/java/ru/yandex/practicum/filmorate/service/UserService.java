@@ -29,8 +29,8 @@ public class UserService {
     public void addFriend(Long idUser, Long idFriend) throws NotFoundException {
 
         userStorage.addFriend(idUser, idFriend);
-        eventStorage.createEvent(idUser, EventType.FRIEND, Operations.ADD, idFriend);
     }
+
 
     /**
      * Get current user
@@ -53,8 +53,6 @@ public class UserService {
     public void deleteFriend(Long idUser, Long idFriend) throws NotFoundException {
 
         userStorage.deleteFriend(idUser, idFriend);
-        eventStorage.createEvent(idUser, EventType.FRIEND, Operations.REMOVE, idFriend);
-
     }
 
     /**

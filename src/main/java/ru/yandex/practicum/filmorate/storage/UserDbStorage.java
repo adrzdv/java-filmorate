@@ -9,9 +9,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.EventMapper;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
-import ru.yandex.practicum.filmorate.model.Event;
-import ru.yandex.practicum.filmorate.model.Status;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
@@ -24,6 +22,7 @@ public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbc;
     private final UserMapper userMapper;
     private final EventMapper eventMapper;
+    private final EventStorage eventStorage;
 
     @Override
     public User addNew(User user) {
@@ -104,6 +103,7 @@ public class UserDbStorage implements UserStorage {
         }
         String query = "INSERT INTO FRIENDS (USER_ID, FRIEND_ID, STATUS) VALUES (?, ?, ?)";
         jdbc.update(query, idUser, idFriend, Status.APPROVED.toString());
+        eventStorage.createEvent(idUser, EventType.FRIEND, Operations.ADD, idFriend, jdbc);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class UserDbStorage implements UserStorage {
 
         String query = "DELETE FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
         jdbc.update(query, idUser, idFriend);
-
+        eventStorage.createEvent(idUser, EventType.FRIEND, Operations.REMOVE, idFriend, jdbc);
     }
 
     @Override

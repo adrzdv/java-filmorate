@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.ReviewMapper;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operations;
 import ru.yandex.practicum.filmorate.model.Review;
 
 
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class ReviewStorage implements BaseStorage {
     private final JdbcTemplate jdbc;
     private final ReviewMapper reviewMapper;
+    private final EventStorage eventStorage;
 
     /**
      * Method for getting all reviews
@@ -103,6 +106,8 @@ public class ReviewStorage implements BaseStorage {
 
         int key = keyHolder.getKey().intValue();
 
+        eventStorage.createEvent(newReview.getUserId(), EventType.REVIEW, Operations.ADD, newReview.getFilmId(), jdbc);
+
         return getOne(key);
     }
 
@@ -153,6 +158,8 @@ public class ReviewStorage implements BaseStorage {
             throw new NotFoundException("Failed to update review with id: " + review.getReviewId());
         }
 
+        eventStorage.createEvent(review.getUserId(), EventType.REVIEW, Operations.UPDATE, review.getFilmId(), jdbc);
+
         return getOne(review.getReviewId());
     }
 
@@ -161,10 +168,10 @@ public class ReviewStorage implements BaseStorage {
      * @param id id of review
      * @throws EmptyResultDataAccessException
      */
-    public void deleteReviewById(int id) throws EmptyResultDataAccessException {
-
+    public void deleteReviewById(int id) throws EmptyResultDataAccessException, NotFoundException {
         String query = "DELETE FROM REVIEWS WHERE ID = ?";
         jdbc.update(query,id);
+        eventStorage.createEvent(getOne(id).getUserId(), EventType.REVIEW, Operations.REMOVE, getOne(id).getFilmId(), jdbc);
     }
 
     /**

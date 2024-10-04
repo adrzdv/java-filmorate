@@ -29,7 +29,6 @@ public class FilmService {
      */
     public Film addLike(Long id, Long userId) throws NotFoundException {
 
-        eventStorage.createEvent(userId, EventType.LIKE, Operations.ADD, id);
         return filmStorage.addLike(id, userId);
     }
 
@@ -55,7 +54,6 @@ public class FilmService {
 
     public Film deleteLike(Long id, Long userId) throws NotFoundException {
 
-        eventStorage.createEvent(userId, EventType.LIKE, Operations.REMOVE, id);
         return filmStorage.removeLike(id, userId);
 
     }
