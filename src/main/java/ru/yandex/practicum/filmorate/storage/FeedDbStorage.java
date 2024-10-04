@@ -14,7 +14,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Repository
