@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.*;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -87,7 +88,7 @@ public class UserController {
      */
     @PutMapping(value = "/{id}/friends/{friendId}")
     public void addFriend(@PathVariable Long id,
-                          @PathVariable Long friendId) throws NotFoundException {
+                          @PathVariable Long friendId) throws NotFoundException, BadRequest {
         userService.addFriend(id, friendId);
     }
 
@@ -97,11 +98,12 @@ public class UserController {
      * @param id       user's id
      * @param friendId friend's id
      * @throws NotFoundException
+     * @throws BadRequest
      */
     @DeleteMapping(value = "/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteFriend(@PathVariable Long id,
-                             @PathVariable Long friendId) throws NotFoundException {
+                             @PathVariable Long friendId) throws NotFoundException, BadRequest {
         userService.deleteFriend(id, friendId);
     }
 
@@ -154,5 +156,11 @@ public class UserController {
     public void deleteUserById(@PathVariable Long userId) {
 
         userService.deleteUserById(userId);
+    }
+
+    @GetMapping(value = "/{userId}/feed")
+    public List<Event> getFeed(@PathVariable Long userId) throws NotFoundException {
+
+        return userService.getFeed(userId);
     }
 }

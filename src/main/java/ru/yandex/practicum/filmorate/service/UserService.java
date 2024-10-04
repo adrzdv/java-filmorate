@@ -2,8 +2,13 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operations;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
@@ -13,6 +18,7 @@ import java.util.List;
 public class UserService {
 
     private final UserStorage userStorage;
+    private final FeedStorage feedStorage;
 
     /**
      * Add a new friend to current user
@@ -21,9 +27,10 @@ public class UserService {
      * @param idFriend friend's id
      * @throws NotFoundException
      */
-    public void addFriend(Long idUser, Long idFriend) throws NotFoundException {
+    public void addFriend(Long idUser, Long idFriend) throws NotFoundException, BadRequest {
 
         userStorage.addFriend(idUser, idFriend);
+        feedStorage.createEvent(idUser, EventType.FRIEND, Operations.ADD, idFriend);
 
     }
 
@@ -45,9 +52,10 @@ public class UserService {
      * @param idFriend friend's id
      * @throws NotFoundException
      */
-    public void deleteFriend(Long idUser, Long idFriend) throws NotFoundException {
+    public void deleteFriend(Long idUser, Long idFriend) throws NotFoundException, BadRequest {
 
         userStorage.deleteFriend(idUser, idFriend);
+        feedStorage.createEvent(idUser, EventType.FRIEND, Operations.REMOVE, idFriend);
 
     }
 
@@ -113,5 +121,10 @@ public class UserService {
     public void deleteUserById(Long id) {
 
         userStorage.deleteUserById(id);
+    }
+
+    public List<Event> getFeed(Long userId) throws NotFoundException {
+
+        return feedStorage.getFeed(userId);
     }
 }

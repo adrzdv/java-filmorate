@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.BadRequest;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Operations;
+import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.List;
 public class FilmService {
 
     private final FilmStorage filmStorage;
+    private final FeedStorage feedStorage;
 
 
     /**
@@ -23,8 +27,8 @@ public class FilmService {
      * @param userId user's id
      * @return Film
      */
-    public Film addLike(Long id, Long userId) throws NotFoundException {
-
+    public Film addLike(Long id, Long userId) throws NotFoundException, BadRequest {
+        feedStorage.createEvent(userId, EventType.LIKE, Operations.ADD, id);
         return filmStorage.addLike(id, userId);
     }
 
@@ -48,8 +52,8 @@ public class FilmService {
      * @return Film
      */
 
-    public Film deleteLike(Long id, Long userId) throws NotFoundException {
-
+    public Film deleteLike(Long id, Long userId) throws NotFoundException, BadRequest {
+        feedStorage.createEvent(userId, EventType.LIKE, Operations.REMOVE, id);
         return filmStorage.removeLike(id, userId);
 
     }
@@ -144,7 +148,7 @@ public class FilmService {
     /**
      * Get recommendations on movies to watch for the user
      *
-     * @param id    user`s id
+     * @param id user`s id
      * @return List of film
      * @throws NotFoundException
      */

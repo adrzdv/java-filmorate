@@ -90,7 +90,7 @@ public class FilmController {
      */
     @PutMapping(value = "/{id}/like/{userId}")
     public Film like(@PathVariable Long id,
-                     @PathVariable Long userId) throws NotFoundException, DuplicateException {
+                     @PathVariable Long userId) throws NotFoundException, DuplicateException, BadRequest {
 
         return filmService.addLike(id, userId);
     }
@@ -104,7 +104,7 @@ public class FilmController {
      */
     @DeleteMapping(value = "/{id}/like/{userId}")
     public Film dislike(@PathVariable Long id,
-                        @PathVariable Long userId) throws NotFoundException {
+                        @PathVariable Long userId) throws NotFoundException, BadRequest {
 
         return filmService.deleteLike(id, userId);
     }

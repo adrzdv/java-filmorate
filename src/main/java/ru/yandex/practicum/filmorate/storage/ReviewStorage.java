@@ -157,6 +157,7 @@ public class ReviewStorage implements BaseStorage {
             throw new NotFoundException("Failed to update review with id: " + review.getReviewId());
         }
 
+
         return getOne(review.getReviewId());
     }
 
@@ -220,6 +221,7 @@ public class ReviewStorage implements BaseStorage {
         if (res != 1) {
             throw new NotFoundException("Review not found ");
         }
+
     }
 
     /**

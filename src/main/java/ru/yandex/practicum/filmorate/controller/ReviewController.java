@@ -32,7 +32,8 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteReviewById(@PathVariable @Valid int id) throws EmptyResultDataAccessException {
+    public void deleteReviewById(@PathVariable @Valid int id) throws EmptyResultDataAccessException,
+            NotFoundException, BadRequest {
         reviewService.deleteReviewById(id);
     }
 
@@ -50,25 +51,25 @@ public class ReviewController {
 
     @PutMapping("/{id}/like/{userId}")
     public void likeReview(@PathVariable @Valid int id,
-                           @PathVariable @Valid int userId) throws NotFoundException {
+                           @PathVariable @Valid int userId) throws NotFoundException, BadRequest {
         reviewService.likeReview(id, userId);
     }
 
     @PutMapping("/{id}/dislike/{userId}")
     public void dislikeReview(@PathVariable @Valid int id,
-                              @PathVariable @Valid int userId) throws NotFoundException {
+                              @PathVariable @Valid int userId) throws NotFoundException, BadRequest {
         reviewService.dislikeReview(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLikeReview(@PathVariable @Valid int id,
-                                 @PathVariable @Valid int userId) throws NotFoundException {
+                                 @PathVariable @Valid int userId) throws NotFoundException, BadRequest {
         reviewService.deleteLikeReview(id, userId);
     }
 
     @DeleteMapping("/{id}/dislike/{userId}")
     public void deleteDislikeReview(@PathVariable @Valid int id,
-                                    @PathVariable @Valid int userId) throws NotFoundException {
+                                    @PathVariable @Valid int userId) throws NotFoundException, BadRequest {
         reviewService.deleteDislikeReview(id, userId);
     }
 }
