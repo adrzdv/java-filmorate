@@ -3,7 +3,11 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operations;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.EventStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
@@ -13,6 +17,7 @@ import java.util.List;
 public class UserService {
 
     private final UserStorage userStorage;
+    private final EventStorage eventStorage;
 
     /**
      * Add a new friend to current user
@@ -24,7 +29,7 @@ public class UserService {
     public void addFriend(Long idUser, Long idFriend) throws NotFoundException {
 
         userStorage.addFriend(idUser, idFriend);
-
+        eventStorage.createEvent(idUser, EventType.FRIEND, Operations.ADD, idFriend);
     }
 
     /**
@@ -48,6 +53,7 @@ public class UserService {
     public void deleteFriend(Long idUser, Long idFriend) throws NotFoundException {
 
         userStorage.deleteFriend(idUser, idFriend);
+        eventStorage.createEvent(idUser, EventType.FRIEND, Operations.REMOVE, idFriend);
 
     }
 
@@ -113,5 +119,10 @@ public class UserService {
     public void deleteUserById(Long id) {
 
         userStorage.deleteUserById(id);
+    }
+
+    public List<Event> getUserEvent(Long userId) {
+        userStorage.getUser(userId);
+        return userStorage.getUserEvent(userId);
     }
 }

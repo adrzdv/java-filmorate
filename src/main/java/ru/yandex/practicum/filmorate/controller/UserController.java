@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.*;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -75,6 +76,12 @@ public class UserController {
     public User getUser(@PathVariable Long id) {
 
         return userService.getUser(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    // новостная лента
+    public List<Event> getEvent(@PathVariable Long id) {
+       return userService.getUserEvent(id);
     }
 
 

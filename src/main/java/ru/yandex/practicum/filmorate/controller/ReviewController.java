@@ -32,7 +32,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteReviewById(@PathVariable @Valid int id) throws EmptyResultDataAccessException {
+    public void deleteReviewById(@PathVariable @Valid int id) throws EmptyResultDataAccessException, NotFoundException {
         reviewService.deleteReviewById(id);
     }
 

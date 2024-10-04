@@ -7,7 +7,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.mapper.EventMapper;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Status;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbc;
     private final UserMapper userMapper;
+    private final EventMapper eventMapper;
 
     @Override
     public User addNew(User user) {
@@ -122,6 +125,13 @@ public class UserDbStorage implements UserStorage {
 
         String query = "DELETE FROM USERS WHERE ID = ?";
         jdbc.update(query, id);
+    }
+
+    @Override
+    public List<Event> getUserEvent(Long id) {
+
+        String sqlQuery = "SELECT * FROM feeds WHERE user_id = ?";
+        return jdbc.query(sqlQuery, eventMapper, id);
     }
 
     /**
