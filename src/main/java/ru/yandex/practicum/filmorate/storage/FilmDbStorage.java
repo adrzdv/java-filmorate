@@ -29,7 +29,6 @@ public class FilmDbStorage implements FilmStorage {
     private final MpaMapper mpaMapper;
     private final FilmResultExtractor filmResultExtractor;
     private final UserDbStorage userDbStorage;
-    private final FilmRatedMapper filmRatedMapper;
     private final String sqlQuery = "SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, FILMS.RELEASE_DATE, FILMS.DURATION,\n" +
             "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE,\n" +
             "DIRECTORS.ID AS DIRECTOR_ID, DIRECTORS.NAME AS DIRECTOR_NAME FROM FILMS\n" +
@@ -162,19 +161,25 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getMostRated(int count, Integer genreId, Integer year) {
-        StringBuilder query = new StringBuilder("SELECT FILMS.ID, FILMS.TITLE, FILMS.DESCRIPTION, " +
-                "FILMS.RELEASE_DATE, FILMS.DURATION, " +
-                "FILMS.MPA_RATE AS MPA_ID, MPA.NAME AS MPA_RATE, COUNT(LIKES.USER_ID) AS LIKES " +
-                "FROM FILMS " +
-                "LEFT JOIN MPA ON MPA.ID = FILMS.MPA_RATE " +
-                "LEFT JOIN FILMS_GENRE ON FILMS_GENRE.FILM_ID = FILMS.ID " +
-                "LEFT JOIN LIKES ON FILMS.ID = LIKES.FILM_ID ");
+
+        StringBuilder query = new StringBuilder("SELECT FILMS.ID , FILMS.TITLE , FILMS.DESCRIPTION, \n" +
+                "FILMS.RELEASE_DATE , FILMS.DURATION, GENRE.ID AS GENRE_ID, GENRE.NAME AS GENRE,\n" +
+                "DIRECTORS.ID AS DIRECTOR_ID, DIRECTORS.NAME AS DIRECTOR_NAME,\n" +
+                "MPA.ID AS MPA_ID, MPA.NAME AS MPA_RATE \n" +
+                "FROM FILMS\n" +
+                "LEFT JOIN FILMS_GENRE ON FILMS_GENRE.FILM_ID = FILMS.ID \n" +
+                "LEFT JOIN MPA ON MPA.ID = FILMS.MPA_RATE \n" +
+                "LEFT JOIN GENRE ON GENRE.ID = FILMS_GENRE.GENRE_ID \n" +
+                "LEFT JOIN FILMS_DIRECTORS ON FILMS_DIRECTORS.FILM_ID = FILMS.ID \n" +
+                "LEFT JOIN DIRECTORS ON FILMS_DIRECTORS.DIRECTOR_ID = DIRECTORS.ID\n" +
+                "LEFT JOIN (SELECT LKS.FILM_ID AS FID, COUNT(LKS.USER_ID) AS LIKE_COUNT FROM LIKES AS LKS GROUP BY FID) " +
+                "ON FID = FILMS.ID \n");
 
         // Добавление фильтрации по жанру, если указан genreId
         if (genreId != null) {
-            query.append("WHERE FILMS_GENRE.GENRE_ID = ").append(genreId).append(" ");
+            query.append("WHERE FILMS.ID IN (SELECT FILMS_GENRE.FILM_ID FROM FILMS_GENRE WHERE FILMS_GENRE.GENRE_ID = ")
+                    .append(genreId).append(") ");
         }
-
         // Добавление фильтрации по году, если указан year
         if (year != null) {
             if (genreId != null) {
@@ -185,10 +190,15 @@ public class FilmDbStorage implements FilmStorage {
             query.append("YEAR(FILMS.RELEASE_DATE) = ").append(year).append(" ");
         }
 
-        query.append("GROUP BY FILMS.ID " +
-                "ORDER BY LIKES DESC LIMIT ?");
+        query.append("ORDER BY LIKE_COUNT DESC");
 
-        return jdbc.query(query.toString(), filmRatedMapper, count);
+        List<Film> tempFilmList = jdbc.query(query.toString(), filmResultExtractor);
+        List<Film> result = new ArrayList<>();
+        for (int i = 0; i < count && i < tempFilmList.size(); i++) {
+            result.add(tempFilmList.get(i));
+        }
+
+        return result;
     }
 
     @Override
@@ -206,7 +216,6 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> getByDirector(int id, String param) throws NotFoundException {
 
-        //String queryCheckDirector = "SELECT NAME FROM DIRECTORS WHERE ID = ?";
         List<Film> result = new ArrayList<>();
         if (param.equals("year")) {
             String query = sqlQuery +
@@ -352,7 +361,6 @@ public class FilmDbStorage implements FilmStorage {
     private Film deleteDuplicates(Film film) throws BadRequest {
 
         if (film.getGenres() == null) {
-            //throw new BadRequest("Some troubles");
             return film;
         }
         List<Genre> genreList = film.getGenres();

@@ -36,22 +36,22 @@ public class ReviewService {
     }
 
     public List<Review> getReviews(Integer filmId, Integer count) {
-        return reviewStorage.getReviews(filmId,count);
+        return reviewStorage.getReviews(filmId, count);
     }
 
     public void likeReview(int reviewId, int userId) throws NotFoundException {
-        reviewStorage.likeReview(reviewId,userId);
+        reviewStorage.likeReview(reviewId, userId);
     }
 
     public void dislikeReview(int reviewId, int userId) throws NotFoundException {
-        reviewStorage.dislikeReview(reviewId,userId);
+        reviewStorage.dislikeReview(reviewId, userId);
     }
 
     public void deleteLikeReview(int reviewId, int userId) throws NotFoundException {
-        reviewStorage.deleteLikeReview(reviewId,userId);
+        reviewStorage.deleteLikeReview(reviewId, userId);
     }
 
     public void deleteDislikeReview(int reviewId, int userId) throws NotFoundException {
-        reviewStorage.deleteDislikeReview(reviewId,userId);
+        reviewStorage.deleteDislikeReview(reviewId, userId);
     }
 }

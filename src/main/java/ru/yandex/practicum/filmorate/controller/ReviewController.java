@@ -43,7 +43,7 @@ public class ReviewController {
 
     @GetMapping
     public List<Review> getReviews(
-            @RequestParam(value = "filmId",required = false) @Valid Integer filmId,
+            @RequestParam(value = "filmId", required = false) @Valid Integer filmId,
             @RequestParam(value = "count", required = false) @Valid Integer count) {
         return reviewService.getReviews(filmId, count);
     }
@@ -51,24 +51,24 @@ public class ReviewController {
     @PutMapping("/{id}/like/{userId}")
     public void likeReview(@PathVariable @Valid int id,
                            @PathVariable @Valid int userId) throws NotFoundException {
-        reviewService.likeReview(id,userId);
+        reviewService.likeReview(id, userId);
     }
 
     @PutMapping("/{id}/dislike/{userId}")
     public void dislikeReview(@PathVariable @Valid int id,
                               @PathVariable @Valid int userId) throws NotFoundException {
-        reviewService.dislikeReview(id,userId);
+        reviewService.dislikeReview(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLikeReview(@PathVariable @Valid int id,
                                  @PathVariable @Valid int userId) throws NotFoundException {
-        reviewService.deleteLikeReview(id,userId);
+        reviewService.deleteLikeReview(id, userId);
     }
 
     @DeleteMapping("/{id}/dislike/{userId}")
     public void deleteDislikeReview(@PathVariable @Valid int id,
                                     @PathVariable @Valid int userId) throws NotFoundException {
-        reviewService.deleteDislikeReview(id,userId);
+        reviewService.deleteDislikeReview(id, userId);
     }
 }
