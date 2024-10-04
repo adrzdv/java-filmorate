@@ -31,13 +31,9 @@ public class FeedDbStorage implements FeedStorage {
         if (userId < 0) {
             throw new NotFoundException("Incorrect user's id");
         }
-
-            Long tim = Timestamp.from(Instant.now()).getTime(); //не забудь удалить
-            String query = "INSERT INTO FEED (TIMESTAMP, USER_ID, EVENT_TYPE, OPERATION, ENTITY_ID) VALUES (?, ?, ?, ?, ?)";
-            jdbc.update(query, tim, userId,
-                    eventType.name(), operation.name(), entityId);
-            //ниже тоже удалить
-            System.out.println(getOne(tim) + " " + eventType.name() + " " + operation.name() + " " + userId + " " + entityId);
+        String query = "INSERT INTO FEED (TIMESTAMP, USER_ID, EVENT_TYPE, OPERATION, ENTITY_ID) VALUES (?, ?, ?, ?, ?)";
+        jdbc.update(query, Timestamp.from(Instant.now()).getTime(), userId,
+                eventType.name(), operation.name(), entityId);
 
     }
 
@@ -50,11 +46,6 @@ public class FeedDbStorage implements FeedStorage {
         return jdbc.query(query, eventMapper, userId);
     }
 
-    //тоже удалить
-    private Event getOne(Long time) {
-        String sql = "SELECT * FROM FEED WHERE TIMESTAMP = ?";
-        return jdbc.queryForObject(sql, eventMapper, time);
-    }
 
     private boolean userChecker(Long userId) {
         User user = userStorage.getUser(userId);
