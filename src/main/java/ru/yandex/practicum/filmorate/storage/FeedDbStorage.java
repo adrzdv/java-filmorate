@@ -23,6 +23,15 @@ public class FeedDbStorage implements FeedStorage {
     private final EventMapper eventMapper;
     private final UserStorage userStorage;
 
+    /**
+     * Method to create a record in the feed
+     *
+     * @param userId    identification number of user
+     * @param eventType type of event
+     * @param operation type of operation
+     * @param entityId  identification number of entity
+     * @throws NotFoundException
+     */
     @Override
     public void createEvent(long userId, EventType eventType, Operations operation, long entityId) throws NotFoundException {
 
@@ -35,16 +44,29 @@ public class FeedDbStorage implements FeedStorage {
 
     }
 
+    /**
+     * Method for get the feed
+     *
+     * @param userId user's id
+     * @return List of Event
+     * @throws NotFoundException
+     */
     @Override
     public List<Event> getFeed(Long userId) throws NotFoundException {
         if (!userChecker(userId)) {
             throw new NotFoundException("User not found");
         }
-        String query = "SELECT * FROM FEED WHERE USER_ID = ?";
+        String query = "SELECT DISTINCT * FROM FEED WHERE USER_ID = ?";
         return jdbc.query(query, eventMapper, userId);
     }
 
 
+    /**
+     * Service method for check user for existing
+     *
+     * @param userId identification number
+     * @return boolean
+     */
     private boolean userChecker(Long userId) {
         User user = userStorage.getUser(userId);
         if (user != null) {

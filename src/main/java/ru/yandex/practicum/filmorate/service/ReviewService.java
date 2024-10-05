@@ -37,8 +37,10 @@ public class ReviewService {
     }
 
     public Review update(Review review) throws NotFoundException, BadRequest {
-        feedStorage.createEvent(review.getUserId(), EventType.REVIEW, Operations.UPDATE, review.getReviewId());
-        return reviewStorage.update(review);
+
+        Review reviewFromDb = reviewStorage.update(review);
+        feedStorage.createEvent(reviewFromDb.getUserId(), EventType.REVIEW, Operations.UPDATE, reviewFromDb.getReviewId());
+        return reviewFromDb;
     }
 
     public void deleteReviewById(int id) throws EmptyResultDataAccessException, NotFoundException, BadRequest {
@@ -52,22 +54,22 @@ public class ReviewService {
     }
 
     public void likeReview(int reviewId, int userId) throws NotFoundException, BadRequest {
-        feedStorage.createEvent(userId, EventType.REVIEW, Operations.UPDATE, reviewId);
+        //feedStorage.createEvent(userId, EventType.REVIEW, Operations.UPDATE, reviewId);
         reviewStorage.likeReview(reviewId, userId);
     }
 
     public void dislikeReview(int reviewId, int userId) throws NotFoundException, BadRequest {
-        feedStorage.createEvent(userId, EventType.REVIEW, Operations.UPDATE, reviewId);
+        //feedStorage.createEvent(userId, EventType.REVIEW, Operations.UPDATE, reviewId);
         reviewStorage.dislikeReview(reviewId, userId);
     }
 
     public void deleteLikeReview(int reviewId, int userId) throws NotFoundException, BadRequest {
-        feedStorage.createEvent(userId, EventType.REVIEW, Operations.UPDATE, reviewId);
+        //feedStorage.createEvent(userId, EventType.REVIEW, Operations.UPDATE, reviewId);
         reviewStorage.deleteLikeReview(reviewId, userId);
     }
 
     public void deleteDislikeReview(int reviewId, int userId) throws NotFoundException, BadRequest {
-        feedStorage.createEvent(userId, EventType.REVIEW, Operations.UPDATE, reviewId);
+        //feedStorage.createEvent(userId, EventType.REVIEW, Operations.UPDATE, reviewId);
         reviewStorage.deleteDislikeReview(reviewId, userId);
     }
 }
